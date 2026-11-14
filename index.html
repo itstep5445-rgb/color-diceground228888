@@ -14,7 +14,6 @@
 
         body {
             min-height: 100vh;
-            background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -24,6 +23,7 @@
             justify-content: center;
             padding: 20px;
             color: #ffffff;
+            transition: background 0.5s ease;
         }
 
         #bgVideo {
@@ -40,43 +40,66 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 580px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
+            max-width: 620px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 26px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             text-align: center;
         }
 
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: bold;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
             letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        .controls-grid {
-            display: flex;
+        /* Секции классификации */
+        .settings-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            gap: 6px;
+        }
+
+        .control-label {
+            font-size: 0.78rem;
+            font-weight: bold;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .styled-select {
-            background-color: rgba(15, 23, 42, 0.8);
+            background-color: rgba(30, 41, 59, 0.9);
             color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 12px;
-            padding: 12px;
-            font-size: 1rem;
+            padding: 11px;
+            font-size: 0.92rem;
             font-weight: bold;
             cursor: pointer;
-            flex: 1;
+            width: 100%;
             outline: none;
         }
 
+        .styled-select:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Арена кубиков */
         .dice-arena {
             min-height: 120px;
             display: flex;
@@ -84,19 +107,19 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
-            margin-bottom: 24px;
+            margin: 22px 0;
             padding: 10px;
         }
 
         .dice {
-            width: 80px;
-            height: 80px;
-            border-radius: 16px;
+            width: 82px;
+            height: 82px;
+            border-radius: 18px;
             border: 3px solid #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
             position: relative;
             user-select: none;
         }
@@ -113,22 +136,22 @@
         }
 
         @keyframes diceAnim {
-            0% { transform: scale(0.5) rotate(-30deg); opacity: 0.3; }
-            70% { transform: scale(1.1) rotate(5deg); }
+            0% { transform: scale(0.5) rotate(-35deg); opacity: 0.3; }
+            70% { transform: scale(1.1) rotate(6deg); }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
         #rollBtn {
             width: 100%;
             padding: 16px;
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             font-weight: bold;
             color: #ffffff;
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 14px;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.45);
             margin-bottom: 20px;
             transition: filter 0.2s;
         }
@@ -141,11 +164,12 @@
             transform: scale(0.98);
         }
 
-        .audio-settings {
+        /* Панель звука и громкости */
+        .audio-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             padding: 12px 16px;
@@ -154,16 +178,16 @@
             flex-wrap: wrap;
         }
 
-        .volume-box {
+        .volume-container {
             display: flex;
             align-items: center;
             gap: 8px;
             flex: 1;
-            min-width: 180px;
+            min-width: 160px;
         }
 
-        .volume-box span {
-            font-size: 0.85rem;
+        .volume-container span {
+            font-size: 0.8rem;
             color: #cbd5e1;
             white-space: nowrap;
         }
@@ -173,7 +197,8 @@
             cursor: pointer;
         }
 
-        .tools-bar {
+        /* Панель загрузки пользовательских медиа */
+        .media-bar {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -227,20 +252,44 @@
     <div class="main-card">
         <h1>Color Dice</h1>
 
-        <div class="controls-grid">
-            <select id="diceCountSelect" class="styled-select" aria-label="Количество кубиков">
-                <option value="1">1 кубик</option>
-                <option value="2">2 кубика</option>
-                <option value="3" selected>3 кубика</option>
-                <option value="4">4 кубика</option>
-                <option value="5">5 кубиков</option>
-                <option value="6">6 кубиков</option>
-            </select>
+        <!-- Классификация: Списки настроек (Кубики, Звук, Темы) -->
+        <div class="settings-section">
+            <div class="control-group">
+                <span class="control-label">🎲 Количество кубиков</span>
+                <select id="diceCountSelect" class="styled-select">
+                    <option value="1">1 кубик</option>
+                    <option value="2">2 кубика</option>
+                    <option value="3" selected>3 кубика</option>
+                    <option value="4">4 кубика</option>
+                    <option value="5">5 кубиков</option>
+                    <option value="6">6 кубиков</option>
+                </select>
+            </div>
 
-            <select id="themeSelect" class="styled-select" aria-label="Тема оформления">
-                <option value="space">🌌 Космос</option>
-                <option value="cyber">⚡ Киберпанк</option>
-                <option value="sunset">🌅 Закат</option>
+            <div class="control-group">
+                <span class="control-label">🎵 Звук броска</span>
+                <select id="soundSelect" class="styled-select">
+                    <option value="bubble" selected>🫧 Бабл-гам (Пузырьки)</option>
+                    <option value="dice">🎲 Классические кубики</option>
+                    <option value="roulette">🎰 Колесо фортуны</option>
+                    <option value="magic">✨ Магия (Колокольчики)</option>
+                    <option value="retro">👾 8-бит Аркада</option>
+                    <option value="space">🛸 Космический лазер</option>
+                    <option value="mute">🔇 Без звука</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group" style="margin-bottom: 22px;">
+            <span class="control-label">🎨 Тема оформления и фон</span>
+            <select id="themeSelect" class="styled-select">
+                <option value="space">🌌 Космос (Глубокие звезды)</option>
+                <option value="cyber">⚡ Киберпанк (Неоновый фиолет)</option>
+                <option value="sunset">🌅 Закат (Пылающий градиент)</option>
+                <option value="neon">🟢 Неоновая матрица (Темный изумруд)</option>
+                <option value="saturn">🪐 Сатурн (Космическая планета)</option>
+                <option value="forest">🌲 Лесная поляна (Глубокий мох)</option>
+                <option value="neptune">🌊 Нептун (Океанский ультрамарин)</option>
             </select>
         </div>
 
@@ -248,30 +297,30 @@
 
         <button type="button" id="rollBtn">БРОСИТЬ !</button>
 
-        <div class="audio-settings">
+        <!-- Настройка громкости и загрузка своего звука -->
+        <div class="audio-box">
             <label class="tool-btn" style="margin:0; cursor:pointer;">
-                🎵 Загрузить звук
+                📁 Свой звук
                 <input type="file" id="soundInput" accept="audio/*">
             </label>
 
-            <div class="volume-box">
+            <div class="volume-container">
                 <span>🔊 Громкость:</span>
                 <input type="range" id="volumeRange" min="0" max="1" step="0.05" value="0.7">
             </div>
         </div>
 
-        <div class="tools-bar">
+        <!-- Загрузка своих фонов (фото/видео) -->
+        <div class="media-bar">
             <label class="tool-btn">
-                🖼️ Фото фона
+                🖼️ Фото на фон
                 <input type="file" id="bgImageInput" accept="image/*">
             </label>
 
             <label class="tool-btn">
-                🎬 Видео фона
+                🎬 Видео на фон
                 <input type="file" id="bgVideoInput" accept="video/*">
             </label>
-
-            <button type="button" class="tool-btn" id="resetBgBtn">🔄 Сброс</button>
         </div>
 
         <div class="footer-credit">
@@ -291,6 +340,7 @@
 
         const diceArena = document.getElementById('diceArena');
         const diceCountSelect = document.getElementById('diceCountSelect');
+        const soundSelect = document.getElementById('soundSelect');
         const rollBtn = document.getElementById('rollBtn');
         const themeSelect = document.getElementById('themeSelect');
         const soundInput = document.getElementById('soundInput');
@@ -299,123 +349,34 @@
         const bgVideo = document.getElementById('bgVideo');
         const bgImageInput = document.getElementById('bgImageInput');
         const bgVideoInput = document.getElementById('bgVideoInput');
-        const resetBgBtn = document.getElementById('resetBgBtn');
 
         let customAudio = null;
         let customAudioUrl = null;
         let bgObjectUrl = null;
+        let audioCtx = null;
 
+        // Звуковой движок (Web Audio API + Бабл-гам + Свой звук)
         function playRollSound() {
-            if (!customAudio) return;
-            customAudio.currentTime = 0;
-            customAudio.volume = parseFloat(volumeRange.value);
-            customAudio.play().catch(() => {});
-        }
+            const soundType = soundSelect.value;
+            if (soundType === 'mute') return;
 
-        volumeRange.addEventListener('input', () => {
-            if (customAudio) {
+            if (soundType === 'custom' && customAudio) {
+                customAudio.currentTime = 0;
                 customAudio.volume = parseFloat(volumeRange.value);
-            }
-        });
-
-        function rollDice(withSound = true) {
-            const count = parseInt(diceCountSelect.value, 10);
-            diceArena.innerHTML = '';
-
-            if (withSound) {
-                playRollSound();
+                customAudio.play().catch(() => {});
+                return;
             }
 
-            for (let i = 0; i < count; i++) {
-                const randomColor = diceColors[Math.floor(Math.random() * diceColors.length)];
-                const diceEl = document.createElement('div');
-                diceEl.className = 'dice rolling';
-                diceEl.style.backgroundColor = randomColor.hex;
-
-                const dot = document.createElement('div');
-                dot.className = 'dice-dot';
-                diceEl.appendChild(dot);
-
-                diceArena.appendChild(diceEl);
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-        }
-
-        rollBtn.addEventListener('click', () => rollDice(true));
-        diceCountSelect.addEventListener('change', () => rollDice(true));
-
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && !['BUTTON', 'SELECT', 'INPUT'].includes(document.activeElement.tagName)) {
-                e.preventDefault();
-                rollDice(true);
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
             }
-        });
 
-        themeSelect.addEventListener('change', (e) => {
-            const theme = e.target.value;
-            if (theme === 'space') {
-                document.body.style.background = 'radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%)';
-            } else if (theme === 'cyber') {
-                document.body.style.background = 'linear-gradient(135deg, #09090b 0%, #3b0764 50%, #831843 100%)';
-            } else if (theme === 'sunset') {
-                document.body.style.background = 'linear-gradient(180deg, #2e1065 0%, #701a75 50%, #9a3412 100%)';
-            }
-        });
+            const now = audioCtx.currentTime;
+            const vol = parseFloat(volumeRange.value);
 
-        soundInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (customAudioUrl) {
-                URL.revokeObjectURL(customAudioUrl);
-            }
-            customAudioUrl = URL.createObjectURL(file);
-            customAudio = new Audio(customAudioUrl);
-            customAudio.volume = parseFloat(volumeRange.value);
-
-            soundInput.parentElement.innerHTML = `🎵 ${file.name.slice(0, 12)}... <input type="file" id="soundInput" accept="audio/*">`;
-            document.getElementById('soundInput').addEventListener('change', arguments.callee);
-            playRollSound();
-        });
-
-        bgImageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
-            bgVideo.style.display = 'none';
-            bgVideo.src = '';
-
-            bgObjectUrl = URL.createObjectURL(file);
-            document.body.style.backgroundImage = `url('${bgObjectUrl}')`;
-        });
-
-        bgVideoInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
-            document.body.style.backgroundImage = '';
-
-            bgObjectUrl = URL.createObjectURL(file);
-            bgVideo.src = bgObjectUrl;
-            bgVideo.style.display = 'block';
-        });
-
-        resetBgBtn.addEventListener('click', () => {
-            if (bgObjectUrl) {
-                URL.revokeObjectURL(bgObjectUrl);
-                bgObjectUrl = null;
-            }
-            document.body.style.backgroundImage = '';
-            bgVideo.style.display = 'none';
-            bgVideo.src = '';
-            bgImageInput.value = '';
-            bgVideoInput.value = '';
-            document.body.style.background = 'radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%)';
-            themeSelect.value = 'space';
-        });
-
-        rollDice(false);
-    </script>
-</body>
-</html>
+            if (soundType === 'bubble') {
+                // Звук "Бабл-гам" (веселые водные пузырьки)
+                [0, 0.08, 0.16, 0.24].forEach((delay, idx) => {
