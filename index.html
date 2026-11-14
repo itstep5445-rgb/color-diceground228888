@@ -41,7 +41,7 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 560px;
+            max-width: 580px;
             background: rgba(15, 23, 42, 0.78);
             border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 28px;
@@ -60,6 +60,14 @@
             background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            font-size: 2.1rem;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
         }
 
         .top-credit {
@@ -211,7 +219,6 @@
             transform: scale(0.98);
         }
 
-        /* Аккуратный микшер громкости */
         .audio-box {
             display: flex;
             align-items: center;
@@ -263,13 +270,13 @@
 
     <video id="bgVideo" autoplay loop muted playsinline></video>
 
-    <!-- Скрытые поля для загрузки файлов через пункты выпадающих списков -->
+    <!-- Скрытые файлы -->
     <input type="file" id="soundInput" accept="audio/*">
     <input type="file" id="bgImageInput" accept="image/*">
     <input type="file" id="bgVideoInput" accept="video/*">
 
     <div class="main-card">
-        <h1>Color Dice</h1>
+        <h1><span class="header-icon">🎲</span> Color Dice</h1>
         <div class="top-credit">
             MADE BY <a href="https://www.tiktok.com/@groundoffc" target="_blank">GROUND</a>
         </div>
@@ -309,14 +316,22 @@
         <div class="control-group" style="margin-bottom: 6px;">
             <span class="control-label">🎨 Тема оформления и фон</span>
             <select id="themeSelect" class="styled-select">
-                <optgroup label="Готовые темы">
+                <optgroup label="Космические темы">
                     <option value="space">🌌 Космос (Глубокие звезды)</option>
-                    <option value="cyber">⚡ Киберпанк (Неоновый фиолет)</option>
-                    <option value="sunset">🌅 Закат (Пылающий градиент)</option>
-                    <option value="neon">🟢 Неоновая матрица (Темный изумруд)</option>
                     <option value="saturn">🪐 Сатурн (Космическая планета)</option>
-                    <option value="forest">🌲 Лесная поляна (Глубокий мох)</option>
                     <option value="neptune">🌊 Нептун (Океанский ультрамарин)</option>
+                </optgroup>
+                <optgroup label="Неоновые & Кибер">
+                    <option value="cyber">⚡ Киберпанк (Неоновый фиолет)</option>
+                    <option value="neon">🟢 Неоновая матрица (Темный изумруд)</option>
+                    <option value="cyberarctic">🧊 Кибер-арктика (Ледяной неон)</option>
+                    <option value="pinkneon">💖 Розовый неон (Клубный вайб)</option>
+                </optgroup>
+                <optgroup label="Природа & Атмосфера">
+                    <option value="sunset">🌅 Закат (Пылающий градиент)</option>
+                    <option value="forest">🌲 Лесная поляна (Глубокий мох)</option>
+                    <option value="fire">🔥 Огненная стихия (Вулканический жар)</option>
+                    <option value="gold">✨ Золотой блеск (Элегантный нуар)</option>
                 </optgroup>
                 <optgroup label="Свой фон">
                     <option value="upload_image">🖼️ Загрузить фото на фон...</option>
@@ -598,6 +613,14 @@
                 document.body.style.background = 'linear-gradient(180deg, #052e16 0%, #15803d 60%, #166534 100%)';
             } else if (theme === 'neptune') {
                 document.body.style.background = 'linear-gradient(135deg, #020617 0%, #1d4ed8 50%, #06b6d4 100%)';
+            } else if (theme === 'cyberarctic') {
+                document.body.style.background = 'linear-gradient(135deg, #082f49 0%, #0369a1 50%, #164e63 100%)';
+            } else if (theme === 'pinkneon') {
+                document.body.style.background = 'linear-gradient(135deg, #4c0519 0%, #be185d 50%, #831843 100%)';
+            } else if (theme === 'fire') {
+                document.body.style.background = 'linear-gradient(135deg, #450a0a 0%, #c2410c 50%, #7c2d12 100%)';
+            } else if (theme === 'gold') {
+                document.body.style.background = 'linear-gradient(135deg, #18181b 0%, #713f12 50%, #27272a 100%)';
             }
         }
 
