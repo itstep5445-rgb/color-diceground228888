@@ -3,111 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Dice — Генератор цветных кубиков</title>
+    <title>Color Dice — Color Dice</title>
     <style>
         :root {
-            --page-bg: linear-gradient(180deg, #93c5fd 0%, #bfdbfe 100%);
-            --card-bg: #4a96f3;
-            --card-border: #ffffff;
+            --bg-gradient: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #090d16 100%);
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.22);
             --text-color: #ffffff;
-            --select-bg: #ffffff;
-            --select-text: #1e293b;
-            --roll-btn-bg: linear-gradient(180deg, #fde047 0%, #facc15 100%);
-            --roll-btn-shadow: #ca8a04;
-            --roll-btn-text: #ffffff;
+            --text-muted: #94a3b8;
+            --select-bg: rgba(15, 23, 42, 0.6);
+            --select-border: rgba(255, 255, 255, 0.2);
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
         }
 
-        /* === ТЕМЫ ОФОРМЛЕНИЯ === */
-        /* 1. День */
-        body.theme-day {
-            --page-bg: linear-gradient(180deg, #60a5fa 0%, #dbeafe 100%);
-            --card-bg: rgba(59, 130, 246, 0.92);
-            --card-border: #ffffff;
+        /* Темы оформления */
+        body.theme-space {
+            --bg-gradient: radial-gradient(circle at 30% 20%, #0f172a 0%, #020617 100%);
+            --card-bg: rgba(15, 23, 42, 0.7);
+            --card-border: rgba(56, 189, 248, 0.3);
         }
-
-        /* 2. Ночь */
-        body.theme-night {
-            --page-bg: radial-gradient(circle at 25% 20%, #1e1b4b 0%, #090d16 100%);
-            --card-bg: rgba(15, 23, 42, 0.85);
-            --card-border: #60a5fa;
+        body.theme-cyber {
+            --bg-gradient: linear-gradient(135deg, #09090b 0%, #3b0764 50%, #831843 100%);
+            --card-bg: rgba(24, 24, 27, 0.75);
+            --card-border: rgba(244, 63, 94, 0.35);
         }
-
-        /* 3. Юпитер */
-        body.theme-jupiter {
-            --page-bg: linear-gradient(165deg, #7c2d12 0%, #c2410c 22%, #fed7aa 48%, #9a3412 72%, #431407 100%);
-            --card-bg: rgba(124, 45, 18, 0.84);
-            --card-border: #fdba74;
-            --roll-btn-bg: linear-gradient(180deg, #fb923c 0%, #ea580c 100%);
-            --roll-btn-shadow: #9a3412;
-        }
-
-        /* 4. Сатурн */
-        body.theme-saturn {
-            --page-bg: radial-gradient(ellipse at center, #fef08a 0%, #d97706 42%, #451a03 85%, #1c1917 100%);
-            --card-bg: rgba(120, 53, 15, 0.84);
-            --card-border: #fde047;
-        }
-
-        /* 5. Марс */
-        body.theme-mars {
-            --page-bg: linear-gradient(180deg, #450a0a 0%, #991b1b 45%, #ea580c 100%);
-            --card-bg: rgba(127, 29, 29, 0.84);
-            --card-border: #fca5a5;
-        }
-
-        /* 6. Нептун */
-        body.theme-neptune {
-            --page-bg: linear-gradient(135deg, #020617 0%, #1d4ed8 50%, #06b6d4 100%);
-            --card-bg: rgba(30, 58, 138, 0.84);
-            --card-border: #67e8f9;
-        }
-
-        /* 7. Закат */
         body.theme-sunset {
-            --page-bg: linear-gradient(180deg, #311042 0%, #be185d 45%, #f97316 85%, #fde047 100%);
-            --card-bg: rgba(131, 24, 67, 0.82);
-            --card-border: #fbcfe8;
+            --bg-gradient: linear-gradient(180deg, #2e1065 0%, #701a75 50%, #9a3412 100%);
+            --card-bg: rgba(88, 28, 135, 0.5);
+            --card-border: rgba(244, 114, 182, 0.3);
         }
-
-        /* 8. Северное сияние */
-        body.theme-aurora {
-            --page-bg: linear-gradient(135deg, #042f2e 0%, #0d9488 45%, #4f46e5 85%, #1e1b4b 100%);
-            --card-bg: rgba(17, 94, 89, 0.82);
-            --card-border: #5eead4;
-        }
-
-        /* 9. Киберпанк / Неон */
-        body.theme-cyberpunk {
-            --page-bg: linear-gradient(135deg, #09090b 0%, #3b0764 50%, #831843 100%);
-            --card-bg: rgba(24, 24, 27, 0.88);
-            --card-border: #f43f5e;
-            --roll-btn-bg: linear-gradient(180deg, #22d3ee 0%, #0284c7 100%);
-            --roll-btn-shadow: #0369a1;
-        }
-
-        /* 10. Изумрудный лес */
-        body.theme-forest {
-            --page-bg: linear-gradient(180deg, #052e16 0%, #15803d 55%, #4ade80 100%);
-            --card-bg: rgba(20, 83, 45, 0.85);
-            --card-border: #86efac;
-        }
-
-        /* 11. Прозрачная (Стекло) */
-        body.theme-glass {
-            --card-bg: rgba(255, 255, 255, 0.18);
-            --card-border: rgba(255, 255, 255, 0.75);
+        body.theme-emerald {
+            --bg-gradient: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #022f26 100%);
+            --card-bg: rgba(6, 78, 59, 0.55);
+            --card-border: rgba(52, 211, 153, 0.3);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background: var(--page-bg);
+            background: var(--bg-gradient);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -116,22 +57,18 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            transition: background 0.4s ease;
+            color: var(--text-color);
+            transition: background 0.5s ease;
         }
 
-        /* Звездная пыль для космических тем */
-        body.theme-night::before,
-        body.theme-saturn::before,
-        body.theme-neptune::before,
-        body.theme-aurora::before {
+        /* Звездный фон */
+        body::before {
             content: "";
             position: fixed;
             inset: 0;
-            background-image: radial-gradient(#ffffff 1.2px, transparent 1.2px),
-                              radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px);
-            background-size: 55px 55px, 95px 95px;
-            background-position: 0 0, 28px 28px;
-            opacity: 0.35;
+            background-image: radial-gradient(rgba(255,255,255,0.7) 1px, transparent 1px);
+            background-size: 45px 45px;
+            opacity: 0.25;
             pointer-events: none;
             z-index: 0;
         }
@@ -150,81 +87,77 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 650px;
+            max-width: 640px;
             background: var(--card-bg);
-            border: 3px solid var(--card-border);
-            border-radius: 26px;
-            padding: 36px 28px;
-            box-shadow: 0 22px 45px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 36px 32px;
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             text-align: center;
-            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         h1 {
-            color: var(--text-color);
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
-            margin-bottom: 24px;
-            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-            letter-spacing: 0.5px;
+            letter-spacing: -0.02em;
+            margin-bottom: 28px;
+            background: linear-gradient(to right, #ffffff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Верхние выпадающие списки */
-        .top-selectors {
-            display: flex;
-            justify-content: center;
+        /* Панель управления верха */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 38px;
+            margin-bottom: 28px;
         }
 
         .styled-select {
             appearance: none;
             -webkit-appearance: none;
             background-color: var(--select-bg);
-            color: var(--select-text);
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
-            padding: 11px 40px 11px 16px;
-            font-size: 1rem;
-            font-weight: 700;
+            color: var(--text-color);
+            border: 1px solid var(--select-border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
-            min-width: 210px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            width: 100%;
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .styled-select:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         /* Арена кубиков */
         .dice-arena {
-            min-height: 120px;
+            min-height: 130px;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 38px;
+            gap: 18px;
+            margin-bottom: 32px;
+            padding: 10px;
         }
 
         .dice {
-            width: 84px;
-            height: 84px;
-            border-radius: 18px;
-            border: 5px solid #ffffff;
+            width: 86px;
+            height: 86px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 24px rgba(255, 255, 255, 0.7), 0 10px 18px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), inset 0 2px 6px rgba(255, 255, 255, 0.4);
             position: relative;
             user-select: none;
         }
@@ -234,429 +167,36 @@
             height: 18px;
             background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .dice.rolling {
-            animation: diceBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: diceAnimate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        @keyframes diceBounce {
-            0% {
-                transform: scale(0.4) rotate(-35deg);
-                opacity: 0.4;
-            }
-            60% {
-                transform: scale(1.12) rotate(10deg);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
+        @keyframes diceAnimate {
+            0% { transform: scale(0.4) rotate(-40deg); opacity: 0.3; }
+            70% { transform: scale(1.1) rotate(8deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
-        /* Большая кнопка БРОСИТЬ ! */
+        /* Главная кнопка броска */
         #rollBtn {
             width: 100%;
-            max-width: 480px;
-            padding: 16px 24px;
-            font-size: 1.55rem;
+            padding: 16px;
+            font-size: 1.25rem;
             font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--roll-btn-text);
-            text-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
-            background: var(--roll-btn-bg);
-            border: 3px solid #ffffff;
-            border-radius: 14px;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
             cursor: pointer;
-            box-shadow: 0 6px 0 var(--roll-btn-shadow), 0 12px 22px rgba(0, 0, 0, 0.25);
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 24px;
         }
 
         #rollBtn:hover {
-            filter: brightness(1.04);
-        }
-
-        #rollBtn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 var(--roll-btn-shadow), 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Нижняя панель настроек тем, звука и фона */
-        .settings-bar {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.35);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .mini-tool {
-            background: rgba(255, 255, 255, 0.92);
-            color: #1e293b;
-            border: none;
-            border-radius: 9px;
-            padding: 8px 13px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            transition: background 0.2s, transform 0.1s;
-        }
-
-        .mini-tool:hover {
-            background: #ffffff;
-            transform: translateY(-1px);
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .hint {
-            margin-top: 14px;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.88);
-        }
-    </style>
-</head>
-<body class="theme-day">
-
-    <video id="bgVideo" autoplay loop muted playsinline></video>
-
-    <div class="main-card">
-        <h1>Color Dice</h1>
-
-        <!-- Выпадающие списки: количество и звук прокрута -->
-        <div class="top-selectors">
-            <select id="diceCountSelect" class="styled-select" aria-label="Количество кубиков">
-                <option value="1">1 кубик</option>
-                <option value="2">2 кубика</option>
-                <option value="3" selected>3 кубика</option>
-                <option value="4">4 кубика</option>
-                <option value="5">5 кубиков</option>
-                <option value="6">6 кубиков</option>
-            </select>
-
-            <select id="soundSelect" class="styled-select" aria-label="Звук прокрута">
-                <option value="dice">🎲 Звук: Кубики</option>
-                <option value="roulette">🎰 Звук: Колесо фортуны</option>
-                <option value="magic">✨ Звук: Магия / Арфа</option>
-                <option value="retro">👾 Звук: 8-бит Аркада</option>
-                <option value="pop">🫧 Звук: Пузырьки</option>
-                <option value="space">🛸 Звук: Космос</option>
-                <option value="custom" id="customSoundOption" disabled>🎵 Свой звук (не загружен)</option>
-                <option value="mute">🔇 Без звука</option>
-            </select>
-        </div>
-
-        <!-- Арена с кубиками -->
-        <div id="diceArena" class="dice-arena"></div>
-
-        <!-- Главная кнопка -->
-        <button type="button" id="rollBtn">БРОСИТЬ !</button>
-
-        <!-- Настройки тем, звука и пользовательского фона -->
-        <div class="settings-bar">
-            <select id="themeSelect" class="mini-tool" aria-label="Выбор темы">
-                <option value="day">☀️ Тема: День</option>
-                <option value="night">🌙 Тема: Ночь</option>
-                <option value="jupiter">🪐 Тема: Юпитер</option>
-                <option value="saturn">💫 Тема: Сатурн</option>
-                <option value="mars">🔴 Тема: Марс</option>
-                <option value="neptune">🌊 Тема: Нептун</option>
-                <option value="sunset">🌅 Тема: Закат</option>
-                <option value="aurora">🌌 Тема: Северное сияние</option>
-                <option value="cyberpunk">⚡ Тема: Неон</option>
-                <option value="forest">🌲 Тема: Лес</option>
-                <option value="glass">🪟 Тема: Прозрачная</option>
-            </select>
-
-            <label class="mini-tool">
-                🎵 Свой звук
-                <input type="file" id="soundInput" accept="audio/*">
-            </label>
-
-            <label class="mini-tool">
-                🖼️ Фото на фон
-                <input type="file" id="bgImageInput" accept="image/*">
-            </label>
-
-            <label class="mini-tool">
-                🎬 Видео на фон
-                <input type="file" id="bgVideoInput" accept="video/*">
-            </label>
-
-            <button type="button" class="mini-tool" id="resetBgBtn">🔄 Сброс фона</button>
-        </div>
-
-        <div class="hint">Нажмите <b>БРОСИТЬ !</b> или клавишу <b>Пробел</b> на клавиатуре</div>
-    </div>
-
-    <script>
-        // Всегда активные цвета на гранях
-        const diceColors = [
-            { name: 'КРАСНЫЙ',    hex: '#f42547' },
-            { name: 'ОРАНЖЕВЫЙ',  hex: '#ff8c1a' },
-            { name: 'ЖЕЛТЫЙ',     hex: '#facc15' },
-            { name: 'ЗЕЛЕНЫЙ',    hex: '#22c55e' },
-            { name: 'СИНИЙ',      hex: '#3b82f6' },
-            { name: 'ФИОЛЕТОВЫЙ', hex: '#a855f7' }
-        ];
-
-        const diceArena = document.getElementById('diceArena');
-        const diceCountSelect = document.getElementById('diceCountSelect');
-        const soundSelect = document.getElementById('soundSelect');
-        const customSoundOption = document.getElementById('customSoundOption');
-        const rollBtn = document.getElementById('rollBtn');
-        const themeSelect = document.getElementById('themeSelect');
-
-        const bgVideo = document.getElementById('bgVideo');
-        const bgImageInput = document.getElementById('bgImageInput');
-        const bgVideoInput = document.getElementById('bgVideoInput');
-        const soundInput = document.getElementById('soundInput');
-        const resetBgBtn = document.getElementById('resetBgBtn');
-
-        let customAudio = null;
-        let customAudioUrl = null;
-        let bgObjectUrl = null;
-        let audioCtx = null;
-
-        // === ЗВУКОВОЙ ДВИЖОК (Web Audio API + свой файл) ===
-        function playRollSound() {
-            const mode = soundSelect.value;
-            if (mode === 'mute') return;
-
-            if (mode === 'custom' && customAudio) {
-                customAudio.currentTime = 0;
-                customAudio.play().catch(() => {});
-                return;
-            }
-
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            const now = audioCtx.currentTime;
-
-            if (mode === 'dice') {
-                // Стук брошенных кубиков
-                [0, 0.07, 0.15, 0.24].forEach((delay, idx) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(280 + idx * 65, now + delay);
-                    osc.frequency.exponentialRampToValueAtTime(90, now + delay + 0.06);
-
-                    gain.gain.setValueAtTime(0.25, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
-
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.065);
-                });
-            } else if (mode === 'roulette') {
-                // Щелчки колеса фортуны
-                for (let i = 0; i < 8; i++) {
-                    const delay = i * (0.025 + i * 0.006);
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(820, now + delay);
-                    gain.gain.setValueAtTime(0.16, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.025);
-
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.03);
-                }
-            } else if (mode === 'magic') {
-                // Волшебный перелив (арфа / колокольчики)
-                const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
-                notes.forEach((freq, idx) => {
-                    const delay = idx * 0.055;
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, now + delay);
-
-                    gain.gain.setValueAtTime(0.15, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.35);
-
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.36);
-                });
-            } else if (mode === 'retro') {
-                // 8-бит аркада
-                const notes = [261.63, 329.63, 392.00, 523.25];
-                notes.forEach((freq, idx) => {
-                    const delay = idx * 0.05;
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(freq, now + delay);
-
-                    gain.gain.setValueAtTime(0.08, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
-
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.065);
-                });
-            } else if (mode === 'pop') {
-                // Водяные пузырьки
-                [0, 0.08, 0.16].forEach((delay, idx) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(320 + idx * 120, now + delay);
-                    osc.frequency.exponentialRampToValueAtTime(750 + idx * 150, now + delay + 0.07);
-
-                    gain.gain.setValueAtTime(0.2, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.075);
-
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.08);
-                });
-            } else if (mode === 'space') {
-                // Космический импульс
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(220, now);
-                osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
-
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
-
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.33);
-            }
-        }
-
-        // Бросок кубиков
-        function rollDice(withSound = true) {
-            const count = parseInt(diceCountSelect.value, 10);
-            diceArena.innerHTML = '';
-
-            if (withSound) {
-                playRollSound();
-            }
-
-            for (let i = 0; i < count; i++) {
-                const randomColor = diceColors[Math.floor(Math.random() * diceColors.length)];
-                const diceEl = document.createElement('div');
-                diceEl.className = 'dice rolling';
-                diceEl.style.backgroundColor = randomColor.hex;
-                diceEl.title = randomColor.name;
-
-                const dot = document.createElement('div');
-                dot.className = 'dice-dot';
-                diceEl.appendChild(dot);
-
-                diceArena.appendChild(diceEl);
-            }
-        }
-
-        // События
-        rollBtn.addEventListener('click', () => rollDice(true));
-        diceCountSelect.addEventListener('change', () => rollDice(true));
-        soundSelect.addEventListener('change', () => playRollSound());
-
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && !['BUTTON', 'SELECT', 'INPUT'].includes(document.activeElement.tagName)) {
-                e.preventDefault();
-                rollDice(true);
-            }
-        });
-
-        // Смена темы
-        themeSelect.addEventListener('change', (e) => {
-            document.body.className = `theme-${e.target.value}`;
-        });
-
-        // Загрузка своего звука
-        soundInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (customAudioUrl) {
-                URL.revokeObjectURL(customAudioUrl);
-            }
-            customAudioUrl = URL.createObjectURL(file);
-            customAudio = new Audio(customAudioUrl);
-
-            const shortName = file.name.length > 18 ? file.name.slice(0, 15) + '...' : file.name;
-            customSoundOption.textContent = `🎵 ${shortName}`;
-            customSoundOption.disabled = false;
-            soundSelect.value = 'custom';
-            playRollSound();
-        });
-
-        // Загрузка фото на фон
-        bgImageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
-            bgVideo.style.display = 'none';
-            bgVideo.src = '';
-
-            bgObjectUrl = URL.createObjectURL(file);
-            document.body.style.backgroundImage = `url('${bgObjectUrl}')`;
-            document.body.className = 'theme-glass';
-            themeSelect.value = 'glass';
-        });
-
-        // Загрузка видео на фон
-        bgVideoInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
-            document.body.style.backgroundImage = '';
-
-            bgObjectUrl = URL.createObjectURL(file);
-            bgVideo.src = bgObjectUrl;
-            bgVideo.style.display = 'block';
-            document.body.className = 'theme-glass';
-            themeSelect.value = 'glass';
-        });
-
-        // Сброс фона
-        resetBgBtn.addEventListener('click', () => {
-            if (bgObjectUrl) {
-                URL.revokeObjectURL(bgObjectUrl);
-                bgObjectUrl = null;
-            }
-            document.body.style.backgroundImage = '';
-            bgVideo.style.display = 'none';
-            bgVideo.src = '';
-            bgImageInput.value = '';
-            bgVideoInput.value = '';
-            document.body.className = 'theme-day';
-            themeSelect.value = 'day';
-        });
-
-        // Первый бросок при открытии страницы
-        rollDice(false);
-    </script>
-</body>
-</html>
+            filter: brightness(1.1);
+            box-shadow: 0 14px 30px rgba(99, 102, 241, 0
