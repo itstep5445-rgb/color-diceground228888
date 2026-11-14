@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Dice — Генератор цветных кубиков</title>
+    <style>
+        :root {
+            --page-bg: #a3c8ff;
+            --card-bg: #4a96f3;
+            --card-border: #ffffff;
+            --text-color: #ffffff;
+            --select-bg: #ffffff;
+            --select-text: #1e293b;
+            --checkbox-panel-bg: rgba(255, 255, 255, 0.88);
+            --roll-btn-bg: linear-gradient(180deg, #fde047 0%, #facc15 100%);
+            --roll-btn-shadow: #ca8a04;
+            --roll-btn-text: #ffffff;
+        }
+
+        /* === ТЕМЫ ОФОРМЛЕНИЯ === */
+        /* 1. День (по умолчанию, как на скриншоте) */
+        body.theme-day {
+            --page-bg: linear-gradient(180deg, #93c5fd 0%, #bfdbfe 100%);
+            --card-bg: #4a96f3;
+            --card-border: #ffffff;
+        }
+
+        /* 2. Ночь */
+        body.theme-night {
+            --page-bg: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #090d16 100%);
+            --card-bg: rgba(23, 37, 84, 0.85);
+            --card-border: #60a5fa;
+            --checkbox-panel-bg: rgba(15, 23, 42, 0.85);
+        }
+
+        /* 3. Юпитер */
+        body.theme-jupiter {
+            --page-bg: linear-gradient(160deg, #7c2d12 0%, #c2410c 25%, #fed7aa 50%, #9a3412 75%, #431407 100%);
+            --card-bg: rgba(124, 45, 18, 0.82);
+            --card-border: #fdba74;
+            --checkbox-panel-bg: rgba(255, 247, 237, 0.9);
+            --roll-btn-bg: linear-gradient(180deg, #fb923c 0%, #ea580c 100%);
+            --roll-btn-shadow: #9a3412;
+        }
+
+        /* 4. Сатурн */
+        body.theme-saturn {
+            --page-bg: radial-gradient(ellipse at center, #fef08a 0%, #d97706 40%, #451a03 85%, #1c1917 100%);
+            --card-bg: rgba(120, 53, 15, 0.82);
+            --card-border: #fde047;
+            --checkbox-panel-bg: rgba(254, 252, 232, 0.92);
+        }
+
+        /* 5. Марс */
+        body.theme-mars {
+            --page-bg: linear-gradient(180deg, #450a0a 0%, #991b1b 45%, #ea580c 100%);
+            --card-bg: rgba(127, 29, 29, 0.82);
+            --card-border: #fca5a5;
+            --checkbox-panel-bg: rgba(254, 242, 242, 0.9);
+        }
+
+        /* 6. Нептун */
+        body.theme-neptune {
+            --page-bg: linear-gradient(135deg, #020617 0%, #1d4ed8 50%, #06b6d4 100%);
+            --card-bg: rgba(30, 58, 138, 0.82);
+            --card-border: #67e8f9;
+            --checkbox-panel-bg: rgba(236, 254, 255, 0.9);
+        }
+
+        /* 7. Прозрачная (Glass) */
+        body.theme-glass {
+            --card-bg: rgba(255, 255, 255, 0.2);
+            --card-border: rgba(255, 255, 255, 0.7);
+            --checkbox-panel-bg: rgba(255, 255, 255, 0.82);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--page-bg);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.4s ease;
+        }
+
+        /* Звездная пыль для космических тем */
+        body.theme-night::before,
+        body.theme-saturn::before,
+        body.theme-neptune::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(#ffffff 1px, transparent 1px),
+                              radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px);
+            background-size: 50px 50px, 90px 90px;
+            background-position: 0 0, 25px 25px;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #bgVideo {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            display: none;
+        }
+
+        .main-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 680px;
+            background: var(--card-bg);
+            border: 3px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-align: center;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        h1 {
+            color: var(--text-color);
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
+        }
+
+        /* Верхние выпадающие списки */
+        .top-selectors {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .styled-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: var(--select-bg);
+            color: var(--select-text);
+            border: 2px solid #93c5fd;
+            border-radius: 10px;
+            padding: 10px 38px 10px 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 195px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .styled-select:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Арена кубиков */
+        .dice-arena {
+            min-height: 110px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .dice {
+            width: 78px;
+            height: 78px;
+            border-radius: 16px;
+            border: 5px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 22px rgba(255, 255, 255, 0.65), 0 8px 16px rgba(0, 0, 0, 0.25);
+            position: relative;
+            user-select: none;
+        }
+
+        /* Белая точка по центру кубика как на скриншоте */
+        .dice-dot {
+            width: 16px;
+            height: 16px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        }
+
+        .dice.rolling {
+            animation: diceBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes diceBounce {
+            0% {
+                transform: scale(0.4) rotate(-35deg);
+                opacity: 0.4;
+            }
+            60% {
+                transform: scale(1.12) rotate(10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Панель с чекбоксами цветов */
+        .colors-panel {
+            background: var(--checkbox-panel-bg);
+            border: 2px solid #ffffff;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            user-select: none;
+            transition: opacity 0.2s;
+        }
+
+        .color-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        /* Большая желтая кнопка БРОСИТЬ ! */
+        #rollBtn {
+            width: 100%;
+            max-width: 520px;
+            padding: 15px 24px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--roll-btn-text);
+            text-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+            background: var(--roll-btn-bg);
+            border: 3px solid #ffffff;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 var(--roll-btn-shadow), 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        #rollBtn:hover {
+            filter: brightness(1.04);
+        }
+
+        #rollBtn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--roll-btn-shadow), 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Нижняя панель настроек тем, звука и фона */
+        .settings-bar {
+            margin-top: 26px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.35);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .mini-tool {
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e293b;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .mini-tool:hover {
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .hint {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.85);
+        }
+    </style>
+</head>
+<body class="theme-day">
+
+    <video id="bgVideo" autoplay loop muted playsinline></video>
+
+    <div class="main-card">
+        <h1>Color Dice</h1>
+
+        <!-- Выпадающие списки: количество и звук прокрута -->
+        <div class="top-selectors">
+            <select id="diceCountSelect" class="styled-select" aria-label="Количество кубиков">
+                <option value="1">1 кубик</option>
+                <option value="2">2 кубика</option>
+                <option value="3" selected>3 кубика</option>
+                <option value="4">4 кубика</option>
+                <option value="5">5 кубиков</option>
+                <option value="6">6 кубиков</option>
+            </select>
+
+            <select id="soundSelect" class="styled-select" aria-label="Звук прокрута">
+                <option value="dice">🔊 Звук: Кубики</option>
+                <option value="roulette">🎰 Звук: Рулетка</option>
+                <option value="space">🛸 Звук: Космос</option>
+                <option value="custom" id="customSoundOption" disabled>🎵 Свой звук (не загружен)</option>
+                <option value="mute">🔇 Без звука</option>
+            </select>
+        </div>
+
+        <!-- Арена с кубиками -->
+        <div id="diceArena" class="dice-arena"></div>
+
+        <!-- Чекбоксы активных цветов -->
+        <div id="colorsPanel" class="colors-panel"></div>
+
+        <!-- Главная кнопка -->
+        <button type="button" id="rollBtn">БРОСИТЬ !</button>
+
+        <!-- Настройки тем, звука и пользовательского фона -->
+        <div class="settings-bar">
+            <select id="themeSelect" class="mini-tool" aria-label="Выбор темы">
+                <option value="day">☀️ Тема: День</option>
+                <option value="night">🌙 Тема: Ночь</option>
+                <option value="jupiter">🪐 Тема: Юпитер</option>
+                <option value="saturn">💫 Тема: Сатурн</option>
+                <option value="mars">🔴 Тема: Марс</option>
+                <option value="neptune">🌊 Тема: Нептун</option>
+                <option value="glass">🪟 Тема: Прозрачная</option>
+            </select>
+
+            <label class="mini-tool">
+                🎵 Свой звук
+                <input type="file" id="soundInput" accept="audio/*">
+            </label>
+
+            <label class="mini-tool">
+                🖼️ Фото на фон
+                <input type="file" id="bgImageInput" accept="image/*">
+            </label>
+
+            <label class="mini-tool">
+                🎬 Видео на фон
+                <input type="file" id="bgVideoInput" accept="video/*">
+            </label>
+
+            <button type="button" class="mini-tool" id="resetBgBtn">🔄 Сброс фона</button>
+        </div>
+
+        <div class="hint">Совет: можно нажимать <b>Пробел</b> на клавиатуре для быстрого броска</div>
+    </div>
+
+    <script>
+        // Палитра цветов
+        const allColors = [
+            { id: 'red',    name: 'КРАСНЫЙ',    hex: '#f42547', textHex: '#ef233c' },
+            { id: 'orange', name: 'ОРАНЖЕВЫЙ',  hex: '#ff8c1a', textHex: '#f97316' },
+            { id: 'yellow', name: 'ЖЕЛТЫЙ',     hex: '#facc15', textHex: '#eab308' },
+            { id: 'green',  name: 'ЗЕЛЕНЫЙ',    hex: '#22c55e', textHex: '#16a34a' },
+            { id: 'blue',   name: 'СИНИЙ',      hex: '#3b82f6', textHex: '#2563eb' },
+            { id: 'purple', name: 'ФИОЛЕТОВЫЙ', hex: '#a855f7', textHex: '#9333ea' }
+        ];
+
+        const diceArena = document.getElementById('diceArena');
+        const diceCountSelect = document.getElementById('diceCountSelect');
+        const soundSelect = document.getElementById('soundSelect');
+        const customSoundOption = document.getElementById('customSoundOption');
+        const colorsPanel = document.getElementById('colorsPanel');
+        const rollBtn = document.getElementById('rollBtn');
+        const themeSelect = document.getElementById('themeSelect');
+
+        const bgVideo = document.getElementById('bgVideo');
+        const bgImageInput = document.getElementById('bgImageInput');
+        const bgVideoInput = document.getElementById('bgVideoInput');
+        const soundInput = document.getElementById('soundInput');
+        const resetBgBtn = document.getElementById('resetBgBtn');
+
+        let customAudio = null;
+        let customAudioUrl = null;
+        let bgObjectUrl = null;
+        let audioCtx = null;
+
+        // Генерация чекбоксов цветов
+        function initColorCheckboxes() {
+            allColors.forEach(color => {
+                const label = document.createElement('label');
+                label.className = 'color-option';
+                label.style.color = color.textHex;
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = color.id;
+                checkbox.checked = true;
+
+                // Не даем снять галочку с последнего оставшегося цвета
+                checkbox.addEventListener('change', () => {
+                    const checkedCount = colorsPanel.querySelectorAll('input:checked').length;
+                    if (checkedCount === 0) {
+                        checkbox.checked = true;
+                        return;
+                    }
+                    label.style.opacity = checkbox.checked ? '1' : '0.45';
+                });
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(color.name));
+                colorsPanel.appendChild(label);
+            });
+        }
+
+        // Получение списка выбранных цветов
+        function getActiveColors() {
+            const checkedIds = Array.from(colorsPanel.querySelectorAll('input:checked')).map(cb => cb.value);
+            return allColors.filter(c => checkedIds.includes(c.id));
+        }
+
+        // === ЗВУКОВОЙ ДВИЖОК ===
+        function playRollSound() {
+            const mode = soundSelect.value;
+            if (mode === 'mute') return;
+
+            // Пользовательский аудиофайл
+            if (mode === 'custom' && customAudio) {
+                customAudio.currentTime = 0;
+                customAudio.play().catch(() => {});
+                return;
+            }
+
+            // Встроенный синтезатор Web Audio API (работает без внешних файлов)
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            if (mode === 'dice') {
+                // Имитация нескольких стуков пластиковых кубиков
+                [0, 0.07, 0.15, 0.24].forEach((delay, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(280 + idx * 65, now + delay);
+                    osc.frequency.exponentialRampToValueAtTime(90, now + delay + 0.06);
+
+                    gain.gain.setValueAtTime(0.25, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.065);
+                });
+            } else if (mode === 'roulette') {
+                // Быстрые щелчки рулетки
+                for (let i = 0; i < 7; i++) {
+                    const delay = i * (0.03 + i * 0.006);
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(750, now + delay);
+                    gain.gain.setValueAtTime(0.15, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.025);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.03);
+                }
+            } else if (mode === 'space') {
+                // Космический перелив
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.33);
+            }
+        }
+
+        // Бросок кубиков
+        function rollDice(withSound = true) {
+            const count = parseInt(diceCountSelect.value, 10);
+            const activeColors = getActiveColors();
+            diceArena.innerHTML = '';
+
+            if (withSound) {
+                playRollSound();
+            }
+
+            for (let i = 0; i < count; i++) {
+                const randomColor = activeColors[Math.floor(Math.random() * activeColors.length)];
+                const diceEl = document.createElement('div');
+                diceEl.className = 'dice rolling';
+                diceEl.style.backgroundColor = randomColor.hex;
+                diceEl.title = randomColor.name;
+
+                const dot = document.createElement('div');
+                dot.className = 'dice-dot';
+                diceEl.appendChild(dot);
+
+                diceArena.appendChild(diceEl);
+            }
+        }
+
+        // События управления
+        rollBtn.addEventListener('click', () => rollDice(true));
+        diceCountSelect.addEventListener('change', () => rollDice(true));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !['BUTTON', 'SELECT', 'INPUT'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                rollDice(true);
+            }
+        });
+
+        // Переключение тем
+        themeSelect.addEventListener('change', (e) => {
+            document.body.className = `theme-${e.target.value}`;
+        });
+
+        // Загрузка своего звука
+        soundInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (customAudioUrl) {
+                URL.revokeObjectURL(customAudioUrl);
+            }
+            customAudioUrl = URL.createObjectURL(file);
+            customAudio = new Audio(customAudioUrl);
+
+            const shortName = file.name.length > 18 ? file.name.slice(0, 15) + '...' : file.name;
+            customSoundOption.textContent = `🎵 ${shortName}`;
+            customSoundOption.disabled = false;
+            soundSelect.value = 'custom';
+            playRollSound();
+        });
+
+        // Загрузка фото на фон
+        bgImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
+            bgVideo.style.display = 'none';
+            bgVideo.src = '';
+
+            bgObjectUrl = URL.createObjectURL(file);
+            document.body.style.backgroundImage = `url('${bgObjectUrl}')`;
+            document.body.className = 'theme-glass';
+            themeSelect.value = 'glass';
+        });
+
+        // Загрузка видео на фон
+        bgVideoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
+            document.body.style.backgroundImage = '';
+
+            bgObjectUrl = URL.createObjectURL(file);
+            bgVideo.src = bgObjectUrl;
+            bgVideo.style.display = 'block';
+            document.body.className = 'theme-glass';
+            themeSelect.value = 'glass';
+        });
+
+        // Сброс фона
+        resetBgBtn.addEventListener('click', () => {
+            if (bgObjectUrl) {
+                URL.revokeObjectURL(bgObjectUrl);
+                bgObjectUrl = null;
+            }
+            document.body.style.backgroundImage = '';
+            bgVideo.style.display = 'none';
+            bgVideo.src = '';
+            bgImageInput.value = '';
+            bgVideoInput.value = '';
+            document.body.className = 'theme-day';
+            themeSelect.value = 'day';
+        });
+
+        // Инициализация
+        initColorCheckboxes();
+        rollDice(false);
+    </script>
+</body>
+</html>
