@@ -3,52 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Dice — Color Dice</title>
+    <title>Color Dice</title>
     <style>
-        :root {
-            --bg-gradient: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #090d16 100%);
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --card-border: rgba(255, 255, 255, 0.22);
-            --text-color: #ffffff;
-            --text-muted: #94a3b8;
-            --select-bg: rgba(15, 23, 42, 0.6);
-            --select-border: rgba(255, 255, 255, 0.2);
-            --accent-color: #6366f1;
-            --accent-hover: #4f46e5;
-        }
-
-        /* Темы оформления */
-        body.theme-space {
-            --bg-gradient: radial-gradient(circle at 30% 20%, #0f172a 0%, #020617 100%);
-            --card-bg: rgba(15, 23, 42, 0.7);
-            --card-border: rgba(56, 189, 248, 0.3);
-        }
-        body.theme-cyber {
-            --bg-gradient: linear-gradient(135deg, #09090b 0%, #3b0764 50%, #831843 100%);
-            --card-bg: rgba(24, 24, 27, 0.75);
-            --card-border: rgba(244, 63, 94, 0.35);
-        }
-        body.theme-sunset {
-            --bg-gradient: linear-gradient(180deg, #2e1065 0%, #701a75 50%, #9a3412 100%);
-            --card-bg: rgba(88, 28, 135, 0.5);
-            --card-border: rgba(244, 114, 182, 0.3);
-        }
-        body.theme-emerald {
-            --bg-gradient: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #022f26 100%);
-            --card-bg: rgba(6, 78, 59, 0.55);
-            --card-border: rgba(52, 211, 153, 0.3);
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: Arial, sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background: var(--bg-gradient);
+            background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -57,20 +23,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            color: var(--text-color);
-            transition: background 0.5s ease;
-        }
-
-        /* Звездный фон */
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background-image: radial-gradient(rgba(255,255,255,0.7) 1px, transparent 1px);
-            background-size: 45px 45px;
-            opacity: 0.25;
-            pointer-events: none;
-            z-index: 0;
+            color: #ffffff;
         }
 
         #bgVideo {
@@ -87,116 +40,101 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 640px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 28px;
-            padding: 36px 32px;
-            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            max-width: 580px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             text-align: center;
         }
 
         h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 28px;
-            background: linear-gradient(to right, #ffffff, #93c5fd);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
         }
 
         .controls-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 28px;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .styled-select {
-            appearance: none;
-            -webkit-appearance: none;
-            background-color: var(--select-bg);
-            color: var(--text-color);
-            border: 1px solid var(--select-border);
-            border-radius: 14px;
-            padding: 12px 16px;
-            font-size: 0.95rem;
-            font-weight: 600;
+            background-color: rgba(15, 23, 42, 0.8);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
-            width: 100%;
+            flex: 1;
             outline: none;
-            transition: all 0.2s ease;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .styled-select:hover {
-            border-color: rgba(255, 255, 255, 0.4);
         }
 
         .dice-arena {
-            min-height: 130px;
+            min-height: 120px;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            gap: 18px;
-            margin-bottom: 32px;
+            gap: 16px;
+            margin-bottom: 24px;
             padding: 10px;
         }
 
         .dice {
-            width: 86px;
-            height: 86px;
-            border-radius: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            border: 3px solid #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), inset 0 2px 6px rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             position: relative;
             user-select: none;
         }
 
         .dice-dot {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .dice.rolling {
-            animation: diceAnimate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: diceAnim 0.35s ease;
         }
 
-        @keyframes diceAnimate {
-            0% { transform: scale(0.4) rotate(-40deg); opacity: 0.3; }
-            70% { transform: scale(1.1) rotate(8deg); }
+        @keyframes diceAnim {
+            0% { transform: scale(0.5) rotate(-30deg); opacity: 0.3; }
+            70% { transform: scale(1.1) rotate(5deg); }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
         #rollBtn {
             width: 100%;
             padding: 16px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            letter-spacing: 0.05em;
+            font-size: 1.3rem;
+            font-weight: bold;
             color: #ffffff;
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 14px;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease;
-            margin-bottom: 24px;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            margin-bottom: 20px;
+            transition: filter 0.2s;
         }
 
         #rollBtn:hover {
             filter: brightness(1.1);
-            box-shadow: 0 14px 30px rgba(99, 102, 241, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
         #rollBtn:active {
@@ -207,77 +145,61 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 12px 18px;
-            margin-bottom: 20px;
-            gap: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .volume-box {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
         }
 
         .volume-box span {
             font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
+            color: #cbd5e1;
             white-space: nowrap;
         }
 
         input[type="range"] {
-            -webkit-appearance: none;
             width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #ffffff;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
 
         .tools-bar {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
+            gap: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 16px;
         }
 
         .tool-btn {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-color);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            padding: 8px 14px;
-            font-size: 0.83rem;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: background 0.2s, transform 0.1s;
+            gap: 5px;
             text-decoration: none;
+            transition: background 0.2s;
         }
 
         .tool-btn:hover {
-            background: rgba(255, 255, 255, 0.16);
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         input[type="file"] {
@@ -285,12 +207,12 @@
         }
 
         .footer-credit {
-            margin-top: 18px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
+            margin-top: 16px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            color: var(--text-muted);
+            color: #94a3b8;
         }
 
         .footer-credit span {
@@ -298,7 +220,7 @@
         }
     </style>
 </head>
-<body class="theme-space">
+<body>
 
     <video id="bgVideo" autoplay loop muted playsinline></video>
 
@@ -316,10 +238,9 @@
             </select>
 
             <select id="themeSelect" class="styled-select" aria-label="Тема оформления">
-                <option value="space">🌌 Тема: Космос</option>
-                <option value="cyber">⚡ Тема: Киберпанк</option>
-                <option value="sunset">🌅 Тема: Закат</option>
-                <option value="emerald">🌲 Тема: Изумруд</option>
+                <option value="space">🌌 Космос</option>
+                <option value="cyber">⚡ Киберпанк</option>
+                <option value="sunset">🌅 Закат</option>
             </select>
         </div>
 
@@ -328,8 +249,8 @@
         <button type="button" id="rollBtn">БРОСИТЬ !</button>
 
         <div class="audio-settings">
-            <label class="tool-btn" style="margin:0;">
-                🎵 Загрузить свой звук
+            <label class="tool-btn" style="margin:0; cursor:pointer;">
+                🎵 Загрузить звук
                 <input type="file" id="soundInput" accept="audio/*">
             </label>
 
@@ -341,16 +262,16 @@
 
         <div class="tools-bar">
             <label class="tool-btn">
-                🖼️ Фото на фон
+                🖼️ Фото фона
                 <input type="file" id="bgImageInput" accept="image/*">
             </label>
 
             <label class="tool-btn">
-                🎬 Видео на фон
+                🎬 Видео фона
                 <input type="file" id="bgVideoInput" accept="video/*">
             </label>
 
-            <button type="button" class="tool-btn" id="resetBgBtn">🔄 Сброс фона</button>
+            <button type="button" class="tool-btn" id="resetBgBtn">🔄 Сброс</button>
         </div>
 
         <div class="footer-credit">
@@ -410,7 +331,6 @@
                 const diceEl = document.createElement('div');
                 diceEl.className = 'dice rolling';
                 diceEl.style.backgroundColor = randomColor.hex;
-                diceEl.title = randomColor.name;
 
                 const dot = document.createElement('div');
                 dot.className = 'dice-dot';
@@ -431,7 +351,14 @@
         });
 
         themeSelect.addEventListener('change', (e) => {
-            document.body.className = `theme-${e.target.value}`;
+            const theme = e.target.value;
+            if (theme === 'space') {
+                document.body.style.background = 'radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%)';
+            } else if (theme === 'cyber') {
+                document.body.style.background = 'linear-gradient(135deg, #09090b 0%, #3b0764 50%, #831843 100%)';
+            } else if (theme === 'sunset') {
+                document.body.style.background = 'linear-gradient(180deg, #2e1065 0%, #701a75 50%, #9a3412 100%)';
+            }
         });
 
         soundInput.addEventListener('change', (e) => {
@@ -445,9 +372,7 @@
             customAudio = new Audio(customAudioUrl);
             customAudio.volume = parseFloat(volumeRange.value);
 
-            const shortName = file.name.length > 20 ? file.name.slice(0, 17) + '...' : file.name;
-            soundInput.parentElement.innerHTML = `🎵 ${shortName} <input type="file" id="soundInput" accept="audio/*">`;
-            
+            soundInput.parentElement.innerHTML = `🎵 ${file.name.slice(0, 12)}... <input type="file" id="soundInput" accept="audio/*">`;
             document.getElementById('soundInput').addEventListener('change', arguments.callee);
             playRollSound();
         });
@@ -486,6 +411,8 @@
             bgVideo.src = '';
             bgImageInput.value = '';
             bgVideoInput.value = '';
+            document.body.style.background = 'radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%)';
+            themeSelect.value = 'space';
         });
 
         rollDice(false);
