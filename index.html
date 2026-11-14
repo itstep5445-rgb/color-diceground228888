@@ -54,9 +54,23 @@
         h1 {
             font-size: 2.3rem;
             font-weight: bold;
-            margin-bottom: 22px;
+            margin-bottom: 6px;
             letter-spacing: 1px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Авторство вверху */
+        .top-credit {
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+
+        .top-credit span {
+            color: #38bdf8;
         }
 
         /* Секции классификации */
@@ -230,19 +244,6 @@
         input[type="file"] {
             display: none;
         }
-
-        .footer-credit {
-            margin-top: 16px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: #94a3b8;
-        }
-
-        .footer-credit span {
-            color: #38bdf8;
-        }
     </style>
 </head>
 <body>
@@ -251,6 +252,9 @@
 
     <div class="main-card">
         <h1>Color Dice</h1>
+        <div class="top-credit">
+            made by <span>Ground</span> (колордайс)
+        </div>
 
         <!-- Классификация: Списки настроек (Кубики, Звук, Темы) -->
         <div class="settings-section">
@@ -322,10 +326,6 @@
                 <input type="file" id="bgVideoInput" accept="video/*">
             </label>
         </div>
-
-        <div class="footer-credit">
-            made by <span>Ground</span> (колордайс)
-        </div>
     </div>
 
     <script>
@@ -355,7 +355,6 @@
         let bgObjectUrl = null;
         let audioCtx = null;
 
-        // Звуковой движок (Web Audio API + Бабл-гам + Свой звук)
         function playRollSound() {
             const soundType = soundSelect.value;
             if (soundType === 'mute') return;
@@ -378,5 +377,213 @@
             const vol = parseFloat(volumeRange.value);
 
             if (soundType === 'bubble') {
-                // Звук "Бабл-гам" (веселые водные пузырьки)
                 [0, 0.08, 0.16, 0.24].forEach((delay, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300 + idx * 140, now + delay);
+                    osc.frequency.exponentialRampToValueAtTime(700 + idx * 160, now + delay + 0.07);
+
+                    gain.gain.setValueAtTime(0.25 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.08);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.09);
+                });
+            } else if (soundType === 'dice') {
+                [0, 0.07, 0.15, 0.24].forEach((delay, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(280 + idx * 65, now + delay);
+                    osc.frequency.exponentialRampToValueAtTime(90, now + delay + 0.06);
+
+                    gain.gain.setValueAtTime(0.3 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.065);
+                });
+            } else if (soundType === 'roulette') {
+                for (let i = 0; i < 8; i++) {
+                    const delay = i * 0.03;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, now + delay);
+                    gain.gain.setValueAtTime(0.2 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.025);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.03);
+                }
+            } else if (soundType === 'magic') {
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                    const delay = idx * 0.06;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + delay);
+
+                    gain.gain.setValueAtTime(0.18 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.3);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.32);
+                });
+            } else if (soundType === 'retro') {
+                [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+                    const delay = idx * 0.05;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(freq, now + delay);
+
+                    gain.gain.setValueAtTime(0.1 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.065);
+                });
+            } else if (soundType === 'space') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+
+                gain.gain.setValueAtTime(0.25 * vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.32);
+            }
+        }
+
+        function rollDice(withSound = true) {
+            const count = parseInt(diceCountSelect.value, 10);
+            diceArena.innerHTML = '';
+
+            if (withSound) {
+                playRollSound();
+            }
+
+            for (let i = 0; i < count; i++) {
+                const randomColor = diceColors[Math.floor(Math.random() * diceColors.length)];
+                const diceEl = document.createElement('div');
+                diceEl.className = 'dice rolling';
+                diceEl.style.backgroundColor = randomColor.hex;
+
+                const dot = document.createElement('div');
+                dot.className = 'dice-dot';
+                diceEl.appendChild(dot);
+
+                diceArena.appendChild(diceEl);
+            }
+        }
+
+        rollBtn.addEventListener('click', () => rollDice(true));
+        diceCountSelect.addEventListener('change', () => rollDice(true));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !['BUTTON', 'SELECT', 'INPUT'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                rollDice(true);
+            }
+        });
+
+        themeSelect.addEventListener('change', (e) => {
+            if (bgObjectUrl) {
+                URL.revokeObjectURL(bgObjectUrl);
+                bgObjectUrl = null;
+            }
+            bgVideo.style.display = 'none';
+            bgVideo.src = '';
+            bgImageInput.value = '';
+            bgVideoInput.value = '';
+
+            applyTheme(e.target.value);
+        });
+
+        function applyTheme(theme) {
+            if (theme === 'space') {
+                document.body.style.background = 'radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%)';
+            } else if (theme === 'cyber') {
+                document.body.style.background = 'linear-gradient(135deg, #09090b 0%, #3b0764 50%, #831843 100%)';
+            } else if (theme === 'sunset') {
+                document.body.style.background = 'linear-gradient(180deg, #2e1065 0%, #701a75 50%, #9a3412 100%)';
+            } else if (theme === 'neon') {
+                document.body.style.background = 'linear-gradient(135deg, #022c22 0%, #064e3b 50%, #022f26 100%)';
+            } else if (theme === 'saturn') {
+                document.body.style.background = 'radial-gradient(ellipse at center, #fef08a 0%, #d97706 40%, #451a03 100%)';
+            } else if (theme === 'forest') {
+                document.body.style.background = 'linear-gradient(180deg, #052e16 0%, #15803d 60%, #166534 100%)';
+            } else if (theme === 'neptune') {
+                document.body.style.background = 'linear-gradient(135deg, #020617 0%, #1d4ed8 50%, #06b6d4 100%)';
+            }
+        }
+
+        soundInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (customAudioUrl) {
+                URL.revokeObjectURL(customAudioUrl);
+            }
+            customAudioUrl = URL.createObjectURL(file);
+            customAudio = new Audio(customAudioUrl);
+            customAudio.volume = parseFloat(volumeRange.value);
+
+            let customOpt = document.getElementById('customSoundOption');
+            if (!customOpt) {
+                customOpt = document.createElement('option');
+                customOpt.id = 'customSoundOption';
+                customOpt.value = 'custom';
+                soundSelect.insertBefore(customOpt, soundSelect.firstChild);
+            }
+            customOpt.textContent = `🎵 ${file.name.slice(0, 14)}...`;
+            soundSelect.value = 'custom';
+            playRollSound();
+        });
+
+        bgImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
+            bgVideo.style.display = 'none';
+            bgVideo.src = '';
+
+            bgObjectUrl = URL.createObjectURL(file);
+            document.body.style.backgroundImage = `url('${bgObjectUrl}')`;
+        });
+
+        bgVideoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
+            document.body.style.backgroundImage = '';
+
+            bgObjectUrl = URL.createObjectURL(file);
+            bgVideo.src = bgObjectUrl;
+            bgVideo.style.display = 'block';
+        });
+
+        applyTheme('space');
+        rollDice(false);
+    </script>
+</body>
+</html>
