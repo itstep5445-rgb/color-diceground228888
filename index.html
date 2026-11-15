@@ -48,7 +48,6 @@
             z-index: 10;
         }
 
-        /* Кнопка микшера громкости */
         .volume-toggle-container {
             position: relative;
             display: flex;
@@ -77,7 +76,6 @@
             box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
         }
 
-        /* Выпадающий слайдер громкости */
         .volume-popup {
             position: absolute;
             top: 54px;
@@ -116,7 +114,6 @@
             width: 110px;
         }
 
-        /* RGB кнопка в верхнем углу */
         .rgb-picker-btn {
             width: 46px;
             height: 46px;
@@ -203,7 +200,13 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 14px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .settings-section {
+                grid-template-columns: 1fr;
+            }
         }
 
         .control-group {
@@ -283,6 +286,8 @@
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.35);
             position: relative;
             user-select: none;
+            animation-duration: var(--anim-dur, 0.45s);
+            animation-fill-mode: both;
         }
 
         .dice-dot {
@@ -293,33 +298,51 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
         }
 
-        .dice.rolling-fast {
-            animation: diceAnimFast 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        /* Виды анимаций квадратиков */
+        .anim-bounce {
+            animation-name: animBounce;
+            animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
-        .dice.rolling-normal {
-            animation: diceAnimNormal 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .dice.rolling-slow {
-            animation: diceAnimSlow 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes diceAnimFast {
-            0% { transform: scale(0.6) rotate(-20deg); opacity: 0.5; }
+        @keyframes animBounce {
+            0% { transform: scale(0.3) rotate(-25deg); opacity: 0; }
+            70% { transform: scale(1.1) rotate(5deg); opacity: 1; }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
-        @keyframes diceAnimNormal {
-            0% { transform: scale(0.45) rotate(-35deg); opacity: 0.3; }
-            70% { transform: scale(1.08) rotate(6deg); }
+        .anim-spin {
+            animation-name: animSpin;
+            animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes animSpin {
+            0% { transform: scale(0.2) rotate(-360deg); opacity: 0; }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
-        @keyframes diceAnimSlow {
-            0% { transform: scale(0.2) rotate(-120deg); opacity: 0; }
-            60% { transform: scale(1.18) rotate(20deg); opacity: 0.8; }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        .anim-flip {
+            animation-name: animFlip;
+            animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes animFlip {
+            0% { transform: perspective(400px) rotateY(180deg) scale(0.5); opacity: 0; }
+            100% { transform: perspective(400px) rotateY(0deg) scale(1); opacity: 1; }
+        }
+
+        .anim-drop {
+            animation-name: animDrop;
+            animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes animDrop {
+            0% { transform: translateY(-45px) scale(0.8); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .anim-flash {
+            animation-name: animFlash;
+            animation-timing-function: ease-out;
+        }
+        @keyframes animFlash {
+            0% { transform: scale(1.35); filter: brightness(2.2); opacity: 0; }
+            100% { transform: scale(1); filter: brightness(1); opacity: 1; }
         }
 
         /* Главная кнопка броска */
@@ -412,7 +435,6 @@
 
     <!-- Верхняя панель в правом углу: Микшер громкости и RGB палитра -->
     <div class="top-controls-bar">
-        <!-- Микшер громкости вверху -->
         <div class="volume-toggle-container">
             <button type="button" class="volume-icon-btn" id="volumeToggleBtn" title="Микшер громкости">
                 🔊
@@ -423,7 +445,6 @@
             </div>
         </div>
 
-        <!-- RGB кнопка выбора цвета -->
         <div class="rgb-picker-btn" title="Выбрать RGB цвет темы">
             🎨
             <input type="color" id="colorPickerInput" value="#6366f1">
@@ -455,6 +476,19 @@
             </div>
 
             <div class="control-group">
+                <span class="control-label">✨ Анимация квадратиков</span>
+                <select id="animSelect" class="styled-select">
+                    <option value="bounce" selected>🏀 Пружинка</option>
+                    <option value="spin">🌀 Поворот 360°</option>
+                    <option value="flip">🃏 Переворот 3D</option>
+                    <option value="drop">⬇️ Падение сверху</option>
+                    <option value="flash">⚡ Вспышка</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="control-group">
                 <span class="control-label">🎵 Звук броска</span>
                 <select id="soundSelect" class="styled-select">
                     <optgroup label="Встроенные звуки">
@@ -471,34 +505,33 @@
                     </optgroup>
                 </select>
             </div>
-        </div>
 
-        <div class="control-group" style="margin-bottom: 14px;">
-            <span class="control-label">🎨 Тема оформления и градиент</span>
-            <select id="themeSelect" class="styled-select">
-                <optgroup label="Космические темы">
-                    <option value="space">🌌 [🟣 Космос] Глубокие звезды</option>
-                    <option value="saturn">🪐 [🟠 Сатурн] Космическая планета</option>
-                    <option value="neptune">🌊 [🔵 Нептун] Океанский ультрамарин</option>
-                </optgroup>
-                <optgroup label="Неоновые & Кибер">
-                    <option value="cyber">⚡ [🟣 Киберпанк] Неоновый фиолет</option>
-                    <option value="neon">🟢 [🟢 Неон] Темный изумруд</option>
-                    <option value="cyberarctic">🧊 [🩵 Арктика] Ледяной неон</option>
-                    <option value="pinkneon">💖 [🩷 Розовый неон] Клубный вайб</option>
-                </optgroup>
-                <optgroup label="Природа & Атмосфера">
-                    <option value="sunset">🌅 [🟠 Закат] Пылающий градиент</option>
-                    <option value="forest">🌲 [🟢 Лес] Глубокий мох</option>
-                    <option value="fire">🔥 [🔴 Огонь] Вулканический жар</option>
-                    <option value="gold">✨ [🟡 Золото] Элегантный нуар</option>
-                </optgroup>
-                <!-- Группа сохраненных и новых фонов -->
-                <optgroup label="Мои фоны" id="customBgsGroup">
-                    <option value="upload_image">🖼️ Загрузить фото на фон...</option>
-                    <option value="upload_video">🎬 Загрузить видео на фон...</option>
-                </optgroup>
-            </select>
+            <div class="control-group">
+                <span class="control-label">🎨 Тема и фон</span>
+                <select id="themeSelect" class="styled-select">
+                    <optgroup label="Космические темы">
+                        <option value="space">🌌 [🟣 Космос] Звезды</option>
+                        <option value="saturn">🪐 [🟠 Сатурн] Планета</option>
+                        <option value="neptune">🌊 [🔵 Нептун] Океан</option>
+                    </optgroup>
+                    <optgroup label="Неоновые & Кибер">
+                        <option value="cyber">⚡ [🟣 Киберпанк] Неон</option>
+                        <option value="neon">🟢 [🟢 Неон] Изумруд</option>
+                        <option value="cyberarctic">🧊 [🩵 Арктика] Лед</option>
+                        <option value="pinkneon">💖 [🩷 Розовый] Клуб</option>
+                    </optgroup>
+                    <optgroup label="Природа & Атмосфера">
+                        <option value="sunset">🌅 [🟠 Закат] Градиент</option>
+                        <option value="forest">🌲 [🟢 Лес] Мох</option>
+                        <option value="fire">🔥 [🔴 Огонь] Жар</option>
+                        <option value="gold">✨ [🟡 Золото] Нуар</option>
+                    </optgroup>
+                    <optgroup label="Мои фоны" id="customBgsGroup">
+                        <option value="upload_image">🖼️ Загрузить фото...</option>
+                        <option value="upload_video">🎬 Загрузить видео...</option>
+                    </optgroup>
+                </select>
+            </div>
         </div>
 
         <div id="diceArena" class="dice-arena"></div>
@@ -525,6 +558,7 @@
 
         const diceArena = document.getElementById('diceArena');
         const diceCountSelect = document.getElementById('diceCountSelect');
+        const animSelect = document.getElementById('animSelect');
         const soundSelect = document.getElementById('soundSelect');
         const rollBtn = document.getElementById('rollBtn');
         const fastRollBtn = document.getElementById('fastRollBtn');
@@ -545,9 +579,10 @@
         let audioCtx = null;
         let activeOscillators = [];
         let stopSoundTimeout = null;
+        let sequentialTimeouts = [];
         let lastValidSound = 'bubble';
         let lastValidTheme = 'space';
-        let savedBackgrounds = {}; // Хранилище загруженных фонов
+        let savedBackgrounds = {};
 
         // Показ/скрытие микшера громкости по клику на значок
         volumeToggleBtn.addEventListener('click', (e) => {
@@ -562,6 +597,11 @@
         volumePopup.addEventListener('click', (e) => {
             e.stopPropagation();
         });
+
+        function clearSequentialRoll() {
+            sequentialTimeouts.forEach(id => clearTimeout(id));
+            sequentialTimeouts = [];
+        }
 
         function stopAllSounds() {
             if (stopSoundTimeout) {
@@ -585,7 +625,7 @@
             if (soundType === 'mute' || soundType === 'upload_sound') return;
 
             const vol = parseFloat(volumeRange.value);
-            const cutTime = speed === 'fast' ? 220 : speed === 'slow' ? 950 : 480;
+            const cutTime = speed === 'fast' ? 200 : speed === 'step' ? 350 : 480;
 
             if (soundType === 'custom' && customAudio) {
                 customAudio.volume = vol;
@@ -606,12 +646,14 @@
             const now = audioCtx.currentTime;
 
             if (soundType === 'bubble') {
-                [0, 0.08, 0.16, 0.24].forEach((delay, idx) => {
+                const count = speed === 'step' ? 1 : 4;
+                for (let idx = 0; idx < count; idx++) {
+                    const delay = idx * 0.08;
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(300 + idx * 140, now + delay);
-                    osc.frequency.exponentialRampToValueAtTime(700 + idx * 160, now + delay + 0.07);
+                    osc.frequency.setValueAtTime(320 + idx * 140, now + delay);
+                    osc.frequency.exponentialRampToValueAtTime(720 + idx * 160, now + delay + 0.07);
 
                     gain.gain.setValueAtTime(0.25 * vol, now + delay);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.08);
@@ -621,9 +663,11 @@
                     osc.start(now + delay);
                     osc.stop(now + delay + 0.09);
                     activeOscillators.push(osc);
-                });
+                }
             } else if (soundType === 'dice') {
-                [0, 0.07, 0.15, 0.24].forEach((delay, idx) => {
+                const count = speed === 'step' ? 1 : 4;
+                for (let idx = 0; idx < count; idx++) {
+                    const delay = idx * 0.07;
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.type = 'triangle';
@@ -638,9 +682,10 @@
                     osc.start(now + delay);
                     osc.stop(now + delay + 0.065);
                     activeOscillators.push(osc);
-                });
+                }
             } else if (soundType === 'roulette') {
-                for (let i = 0; i < 8; i++) {
+                const ticks = speed === 'step' ? 2 : 8;
+                for (let i = 0; i < ticks; i++) {
                     const delay = i * 0.03;
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
@@ -656,7 +701,8 @@
                     activeOscillators.push(osc);
                 }
             } else if (soundType === 'magic') {
-                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                const notes = speed === 'step' ? [783.99] : [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
                     const delay = idx * 0.06;
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
@@ -673,7 +719,8 @@
                     activeOscillators.push(osc);
                 });
             } else if (soundType === 'retro') {
-                [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+                const notes = speed === 'step' ? [523.25] : [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, idx) => {
                     const delay = idx * 0.05;
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
@@ -694,37 +741,61 @@
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(220, now);
-                osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.22);
 
                 gain.gain.setValueAtTime(0.25 * vol, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
 
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start(now);
-                osc.stop(now + 0.32);
+                osc.stop(now + 0.28);
                 activeOscillators.push(osc);
             }
         }
 
-        function rollDice(withSound = true, speed = 'normal') {
+        function createDiceElement(durSeconds) {
+            const animType = animSelect.value;
+            const randomColor = diceColors[Math.floor(Math.random() * diceColors.length)];
+            const diceEl = document.createElement('div');
+            diceEl.className = `dice anim-${animType}`;
+            diceEl.style.setProperty('--anim-dur', `${durSeconds}s`);
+            diceEl.style.backgroundColor = randomColor.hex;
+
+            const dot = document.createElement('div');
+            dot.className = 'dice-dot';
+            diceEl.appendChild(dot);
+            return diceEl;
+        }
+
+        function rollDice(withSound = true, mode = 'normal') {
+            clearSequentialRoll();
             const count = parseInt(diceCountSelect.value, 10);
             diceArena.innerHTML = '';
 
+            if (mode === 'slow') {
+                // Медленный ролл: квадратики появляются по одному по очереди
+                for (let i = 0; i < count; i++) {
+                    const tid = setTimeout(() => {
+                        if (withSound) {
+                            playRollSound('step');
+                        }
+                        const diceEl = createDiceElement(0.55);
+                        diceArena.appendChild(diceEl);
+                    }, i * 550);
+                    sequentialTimeouts.push(tid);
+                }
+                return;
+            }
+
+            // Обычный или быстрый ролл (все вместе)
+            const dur = mode === 'fast' ? 0.18 : 0.45;
             if (withSound) {
-                playRollSound(speed);
+                playRollSound(mode);
             }
 
             for (let i = 0; i < count; i++) {
-                const randomColor = diceColors[Math.floor(Math.random() * diceColors.length)];
-                const diceEl = document.createElement('div');
-                diceEl.className = `dice rolling-${speed}`;
-                diceEl.style.backgroundColor = randomColor.hex;
-
-                const dot = document.createElement('div');
-                dot.className = 'dice-dot';
-                diceEl.appendChild(dot);
-
+                const diceEl = createDiceElement(dur);
                 diceArena.appendChild(diceEl);
             }
         }
@@ -734,6 +805,7 @@
         slowRollBtn.addEventListener('click', () => rollDice(true, 'slow'));
 
         diceCountSelect.addEventListener('change', () => rollDice(true, 'normal'));
+        animSelect.addEventListener('change', () => rollDice(true, 'normal'));
 
         volumeRange.addEventListener('input', () => {
             if (customAudio) {
@@ -758,7 +830,6 @@
             }
         });
 
-        // Обработка выбора RGB цвета из верхнего угла
         colorPickerInput.addEventListener('input', (e) => {
             const col = e.target.value;
             bgVideo.style.display = 'none';
@@ -782,7 +853,6 @@
 
             lastValidTheme = val;
 
-            // Проверка, является ли выбранный элемент сохраненным пользовательским фоном
             if (savedBackgrounds[val]) {
                 const bg = savedBackgrounds[val];
                 if (bg.type === 'image') {
