@@ -48,7 +48,6 @@
             z-index: 10;
         }
 
-        /* Общий стиль круглых кнопок вверху */
         .top-icon-btn {
             width: 46px;
             height: 46px;
@@ -72,12 +71,10 @@
             box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
         }
 
-        /* Специальный градиент для кнопки палитры */
         .palette-btn {
             background: linear-gradient(135deg, #ef4444, #3b82f6, #a855f7, #22c55e);
         }
 
-        /* Выпадающие панели (поп-апы) */
         .popup-menu {
             position: absolute;
             top: 56px;
@@ -95,7 +92,7 @@
             visibility: hidden;
             transform: translateY(-8px);
             transition: all 0.25s ease;
-            min-width: 240px;
+            min-width: 250px;
             text-align: left;
             z-index: 20;
         }
@@ -376,14 +373,30 @@
 
     <video id="bgVideo" autoplay loop muted playsinline></video>
 
-    <!-- Верхняя панель управления (Громкость и Палитра тем) -->
+    <!-- Верхняя панель управления (Звук + Громкость и Палитра тем) -->
     <div class="top-controls-bar">
-        <!-- Микшер громкости -->
-        <div class="top-icon-btn" id="volumeToggleBtn" title="Микшер громкости">
+        <!-- Микшер громкости и выбор звука -->
+        <div class="top-icon-btn" id="volumeToggleBtn" title="Звуки и громкость">
             🔊
-            <div class="popup-menu" id="volumePopup">
+            <div class="popup-menu" id="volumePopup" style="min-width: 260px;">
                 <div class="popup-title">🔊 Громкость звука</div>
                 <input type="range" id="volumeRange" min="0" max="1" step="0.05" value="0.7">
+
+                <div class="popup-title" style="margin-top: 4px;">🎵 Звук броска</div>
+                <select id="soundSelect" class="styled-select">
+                    <optgroup label="Встроенные звуки">
+                        <option value="bubble" selected>🫧 Бабл-гам (Пузырьки)</option>
+                        <option value="dice">🎲 Классические кубики</option>
+                        <option value="roulette">🎰 Колесо фортуны</option>
+                        <option value="magic">✨ Магия (Колокольчики)</option>
+                        <option value="retro">👾 8-бит Аркада</option>
+                        <option value="space">🛸 Космический лазер</option>
+                        <option value="mute">🔇 Без звука</option>
+                    </optgroup>
+                    <optgroup label="Свой файл" id="customSoundGroup">
+                        <option value="upload_sound">📁 Загрузить свой звук...</option>
+                    </optgroup>
+                </select>
             </div>
         </div>
 
@@ -459,24 +472,6 @@
                     <option value="flash">⚡ Вспышка</option>
                 </select>
             </div>
-        </div>
-
-        <div class="control-group" style="margin-bottom: 14px;">
-            <span class="control-label">🎵 Звук броска</span>
-            <select id="soundSelect" class="styled-select">
-                <optgroup label="Встроенные звуки">
-                    <option value="bubble" selected>🫧 Бабл-гам (Пузырьки)</option>
-                    <option value="dice">🎲 Классические кубики</option>
-                    <option value="roulette">🎰 Колесо фортуны</option>
-                    <option value="magic">✨ Магия (Колокольчики)</option>
-                    <option value="retro">👾 8-бит Аркада</option>
-                    <option value="space">🛸 Космический лазер</option>
-                    <option value="mute">🔇 Без звука</option>
-                </optgroup>
-                <optgroup label="Свой файл" id="customSoundGroup">
-                    <option value="upload_sound">📁 Загрузить свой звук...</option>
-                </optgroup>
-            </select>
         </div>
 
         <div id="diceArena" class="dice-arena"></div>
@@ -711,7 +706,6 @@
             diceArena.innerHTML = '';
 
             if (mode === 'slow') {
-                // Медленный ролл: квадратики появляются по одному по очереди
                 for (let i = 0; i < count; i++) {
                     const tid = setTimeout(() => {
                         if (withSound) playRollSound('step');
