@@ -37,11 +37,87 @@
             display: none;
         }
 
-        /* RGB кнопка в верхнем углу */
-        .rgb-picker-btn {
+        /* Верхняя панель управления (RGB и Громкость) */
+        .top-controls-bar {
             position: fixed;
             top: 20px;
             right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        /* Кнопка микшера громкости */
+        .volume-toggle-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .volume-icon-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .volume-icon-btn:hover {
+            transform: scale(1.1);
+            background: rgba(30, 41, 59, 0.95);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Выпадающий слайдер громкости */
+        .volume-popup {
+            position: absolute;
+            top: 54px;
+            right: 0;
+            background: rgba(15, 23, 42, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            padding: 12px 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(14px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .volume-toggle-container:hover .volume-popup,
+        .volume-popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .volume-popup span {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #cbd5e1;
+            text-transform: uppercase;
+        }
+
+        .volume-popup input[type="range"] {
+            width: 110px;
+        }
+
+        /* RGB кнопка в верхнем углу */
+        .rgb-picker-btn {
             width: 46px;
             height: 46px;
             border-radius: 50%;
@@ -53,7 +129,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            z-index: 10;
+            position: relative;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
@@ -276,7 +352,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 18px;
         }
 
         .speed-btn {
@@ -299,23 +374,6 @@
 
         .speed-btn:active {
             transform: scale(0.97);
-        }
-
-        .audio-box {
-            display: flex;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.28);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 13px 18px;
-            gap: 12px;
-        }
-
-        .audio-box span {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #cbd5e1;
-            white-space: nowrap;
         }
 
         input[type="range"] {
@@ -352,10 +410,24 @@
 
     <video id="bgVideo" autoplay loop muted playsinline></video>
 
-    <!-- RGB кнопка в верхнем углу для выбора цвета -->
-    <div class="rgb-picker-btn" title="Выбрать RGB цвет темы">
-        🎨
-        <input type="color" id="colorPickerInput" value="#6366f1">
+    <!-- Верхняя панель в правом углу: Микшер громкости и RGB палитра -->
+    <div class="top-controls-bar">
+        <!-- Микшер громкости вверху -->
+        <div class="volume-toggle-container">
+            <button type="button" class="volume-icon-btn" id="volumeToggleBtn" title="Микшер громкости">
+                🔊
+            </button>
+            <div class="volume-popup" id="volumePopup">
+                <span>Громкость</span>
+                <input type="range" id="volumeRange" min="0" max="1" step="0.05" value="0.7">
+            </div>
+        </div>
+
+        <!-- RGB кнопка выбора цвета -->
+        <div class="rgb-picker-btn" title="Выбрать RGB цвет темы">
+            🎨
+            <input type="color" id="colorPickerInput" value="#6366f1">
+        </div>
     </div>
 
     <!-- Скрытые файлы -->
@@ -421,7 +493,8 @@
                     <option value="fire">🔥 [🔴 Огонь] Вулканический жар</option>
                     <option value="gold">✨ [🟡 Золото] Элегантный нуар</option>
                 </optgroup>
-                <optgroup label="Свой фон">
+                <!-- Группа сохраненных и новых фонов -->
+                <optgroup label="Мои фоны" id="customBgsGroup">
                     <option value="upload_image">🖼️ Загрузить фото на фон...</option>
                     <option value="upload_video">🎬 Загрузить видео на фон...</option>
                 </optgroup>
@@ -437,11 +510,6 @@
         <div class="speed-buttons-grid">
             <button type="button" id="fastRollBtn" class="speed-btn">⚡ Быстрый ролл</button>
             <button type="button" id="slowRollBtn" class="speed-btn">🐢 Медленный ролл</button>
-        </div>
-
-        <div class="audio-box">
-            <span>🔊 Громкость:</span>
-            <input type="range" id="volumeRange" min="0" max="1" step="0.05" value="0.7">
         </div>
     </div>
 
@@ -464,6 +532,8 @@
         const themeSelect = document.getElementById('themeSelect');
         const soundInput = document.getElementById('soundInput');
         const volumeRange = document.getElementById('volumeRange');
+        const volumeToggleBtn = document.getElementById('volumeToggleBtn');
+        const volumePopup = document.getElementById('volumePopup');
         const colorPickerInput = document.getElementById('colorPickerInput');
 
         const bgVideo = document.getElementById('bgVideo');
@@ -472,12 +542,26 @@
 
         let customAudio = null;
         let customAudioUrl = null;
-        let bgObjectUrl = null;
         let audioCtx = null;
         let activeOscillators = [];
         let stopSoundTimeout = null;
         let lastValidSound = 'bubble';
         let lastValidTheme = 'space';
+        let savedBackgrounds = {}; // Хранилище загруженных фонов
+
+        // Показ/скрытие микшера громкости по клику на значок
+        volumeToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            volumePopup.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            volumePopup.classList.remove('active');
+        });
+
+        volumePopup.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
 
         function stopAllSounds() {
             if (stopSoundTimeout) {
@@ -677,15 +761,8 @@
         // Обработка выбора RGB цвета из верхнего угла
         colorPickerInput.addEventListener('input', (e) => {
             const col = e.target.value;
-            if (bgObjectUrl) {
-                URL.revokeObjectURL(bgObjectUrl);
-                bgObjectUrl = null;
-            }
             bgVideo.style.display = 'none';
             bgVideo.src = '';
-            bgImageInput.value = '';
-            bgVideoInput.value = '';
-
             document.body.style.background = `radial-gradient(circle at center, ${col}44 0%, #05070b 100%)`;
             rollBtn.style.background = `linear-gradient(135deg, ${col} 0%, #0f172a 100%)`;
         });
@@ -704,15 +781,24 @@
             }
 
             lastValidTheme = val;
-            if (bgObjectUrl) {
-                URL.revokeObjectURL(bgObjectUrl);
-                bgObjectUrl = null;
+
+            // Проверка, является ли выбранный элемент сохраненным пользовательским фоном
+            if (savedBackgrounds[val]) {
+                const bg = savedBackgrounds[val];
+                if (bg.type === 'image') {
+                    bgVideo.style.display = 'none';
+                    bgVideo.src = '';
+                    document.body.style.background = `url('${bg.url}') center / cover no-repeat fixed`;
+                } else if (bg.type === 'video') {
+                    document.body.style.background = '#090d16';
+                    bgVideo.src = bg.url;
+                    bgVideo.style.display = 'block';
+                }
+                return;
             }
+
             bgVideo.style.display = 'none';
             bgVideo.src = '';
-            bgImageInput.value = '';
-            bgVideoInput.value = '';
-
             applyTheme(val);
         });
 
@@ -786,46 +872,48 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
             bgVideo.style.display = 'none';
             bgVideo.src = '';
 
-            bgObjectUrl = URL.createObjectURL(file);
-            document.body.style.background = `url('${bgObjectUrl}') center / cover no-repeat fixed`;
+            const url = URL.createObjectURL(file);
+            const key = 'bg_' + Date.now();
+            savedBackgrounds[key] = { type: 'image', url: url };
 
-            let customBgOpt = document.getElementById('customBgOption');
-            if (!customBgOpt) {
-                customBgOpt = document.createElement('option');
-                customBgOpt.id = 'customBgOption';
-                customBgOpt.value = 'custom_bg';
-                themeSelect.querySelector('optgroup[label="Свой фон"]').prepend(customBgOpt);
-            }
-            customBgOpt.textContent = `🖼️ Фото: ${file.name.slice(0, 16)}...`;
-            themeSelect.value = 'custom_bg';
-            lastValidTheme = 'custom_bg';
+            document.body.style.background = `url('${url}') center / cover no-repeat fixed`;
+
+            const group = document.getElementById('customBgsGroup');
+            const newOpt = document.createElement('option');
+            newOpt.value = key;
+            newOpt.textContent = `🖼️ ${file.name.slice(0, 16)}`;
+            group.insertBefore(newOpt, group.firstChild);
+
+            themeSelect.value = key;
+            lastValidTheme = key;
+            bgImageInput.value = '';
         });
 
         bgVideoInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            if (bgObjectUrl) URL.revokeObjectURL(bgObjectUrl);
             document.body.style.background = '#090d16';
 
-            bgObjectUrl = URL.createObjectURL(file);
-            bgVideo.src = bgObjectUrl;
+            const url = URL.createObjectURL(file);
+            const key = 'bg_' + Date.now();
+            savedBackgrounds[key] = { type: 'video', url: url };
+
+            bgVideo.src = url;
             bgVideo.style.display = 'block';
 
-            let customBgOpt = document.getElementById('customBgOption');
-            if (!customBgOpt) {
-                customBgOpt = document.createElement('option');
-                customBgOpt.id = 'customBgOption';
-                customBgOpt.value = 'custom_bg';
-                themeSelect.querySelector('optgroup[label="Свой фон"]').prepend(customBgOpt);
-            }
-            customBgOpt.textContent = `🎬 Видео: ${file.name.slice(0, 16)}...`;
-            themeSelect.value = 'custom_bg';
-            lastValidTheme = 'custom_bg';
+            const group = document.getElementById('customBgsGroup');
+            const newOpt = document.createElement('option');
+            newOpt.value = key;
+            newOpt.textContent = `🎬 ${file.name.slice(0, 16)}`;
+            group.insertBefore(newOpt, group.firstChild);
+
+            themeSelect.value = key;
+            lastValidTheme = key;
+            bgVideoInput.value = '';
         });
 
         applyTheme('space');
