@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -590,4 +591,788 @@
             </optgroup>
             <optgroup label="Неоновые & Кибер">
                 <option value="cyber">⚡ [🟣 Киберпанк] Неон</option>
-                <option value="neon">🟢 [🟢
+                <option value="neon">🟢 [🟢 Неон] Изумруд</option>
+                <option value="cyberarctic">🧊 [🩵 Арктика] Лед</option>
+                <option value="pinkneon">💖 [🩷 Розовый] Клуб</option>
+            </optgroup>
+            <optgroup label="Природа & Атмосфера">
+                <option value="sunset">🌅 [🟠 Закат] Градиент</option>
+                <option value="forest">🌲 [🟢 Лес] Мох</option>
+                <option value="fire">🔥 [🔴 Огонь] Жар</option>
+                <option value="gold">✨ [🟡 Золото] Нуар</option>
+            </optgroup>
+            <optgroup label="Мои фоны" id="customBgsGroup">
+                <option value="upload_image">🖼️ Загрузить фото...</option>
+                <option value="upload_video">🎬 Загрузить видео...</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <!-- Скрытые файлы -->
+    <input type="file" id="soundInput" accept="audio/*">
+    <input type="file" id="bgImageInput" accept="image/*">
+    <input type="file" id="bgVideoInput" accept="video/*">
+
+    <!-- Главная перетаскиваемая карточка -->
+    <div class="main-card" id="mainCard">
+        <div class="main-drag-handle" data-drag-target="mainCard" title="Потяните, чтобы переместить окно">
+            <div class="drag-pill"></div>
+            <h1><span class="header-icon">🎲</span> Color Dice</h1>
+            <div class="top-credit">
+                MADE BY <a href="https://www.tiktok.com/@groundoffc" target="_blank">GROUND</a>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="control-group">
+                <span class="control-label">🎲 Количество кубиков</span>
+                <select id="diceCountSelect" class="styled-select">
+                    <option value="1">1 кубик</option>
+                    <option value="2">2 кубика</option>
+                    <option value="3" selected>3 кубика</option>
+                    <option value="4">4 кубика</option>
+                    <option value="5">5 кубиков</option>
+                    <option value="6">6 кубиков</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <span class="control-label">✨ Анимация финиша</span>
+                <select id="animSelect" class="styled-select">
+                    <option value="bounce" selected>🏀 Пружинка</option>
+                    <option value="spin">🌀 Поворот 360°</option>
+                    <option value="flip">🃏 Переворот 3D</option>
+                    <option value="drop">⬇️ Падение сверху</option>
+                    <option value="flash">⚡ Вспышка</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="diceArena" class="dice-arena"></div>
+
+        <!-- Кнопка обычного броска -->
+        <button type="button" id="rollBtn">БРОСИТЬ !</button>
+
+        <!-- Кнопки быстрого и медленного ролла -->
+        <div class="speed-buttons-grid">
+            <button type="button" id="fastRollBtn" class="speed-btn">⚡ Быстрый ролл</button>
+            <button type="button" id="slowRollBtn" class="speed-btn">🐢 Медленный ролл</button>
+        </div>
+    </div>
+
+    <script>
+        const diceColors = [
+            { name: 'КРАСНЫЙ',    hex: '#ef4444' },
+            { name: 'ОРАНЖЕВЫЙ',  hex: '#f97316' },
+            { name: 'ЖЕЛТЫЙ',     hex: '#eab308' },
+            { name: 'ЗЕЛЕНЫЙ',    hex: '#22c55e' },
+            { name: 'СИНИЙ',      hex: '#3b82f6' },
+            { name: 'ФИОЛЕТОВЫЙ', hex: '#a855f7' }
+        ];
+
+        const diceArena = document.getElementById('diceArena');
+        const diceCountSelect = document.getElementById('diceCountSelect');
+        const animSelect = document.getElementById('animSelect');
+        const soundSelect = document.getElementById('soundSelect');
+        const rollBtn = document.getElementById('rollBtn');
+        const fastRollBtn = document.getElementById('fastRollBtn');
+        const slowRollBtn = document.getElementById('slowRollBtn');
+        const themeSelect = document.getElementById('themeSelect');
+        const soundInput = document.getElementById('soundInput');
+        const volumeRange = document.getElementById('volumeRange');
+
+        const historyToggleBtn = document.getElementById('historyToggleBtn');
+        const historyPopup = document.getElementById('historyPopup');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+        const volumeToggleBtn = document.getElementById('volumeToggleBtn');
+        const volumePopup = document.getElementById('volumePopup');
+        const paletteToggleBtn = document.getElementById('paletteToggleBtn');
+        const palettePopup = document.getElementById('palettePopup');
+        const colorPickerInput = document.getElementById('colorPickerInput');
+
+        const bgVideo = document.getElementById('bgVideo');
+        const bgImageInput = document.getElementById('bgImageInput');
+        const bgVideoInput = document.getElementById('bgVideoInput');
+
+        let customAudio = null;
+        let customAudioUrl = null;
+        let audioCtx = null;
+        let activeOscillators = [];
+        let stopSoundTimeout = null;
+        let activeTimers = [];
+        let activeIntervals = [];
+        let currentRollId = 0;
+        let lastValidSound = 'bubble';
+        let lastValidTheme = 'space';
+        let savedBackgrounds = {};
+        let rollHistory = [];
+        let topZIndex = 45;
+
+        // ================= ПЕРЕТАСКИВАНИЕ ОКОН (DRAG & DROP) =================
+        function bringToFront(el) {
+            if (el.id === 'mainCard') return;
+            topZIndex++;
+            el.style.zIndex = topZIndex;
+        }
+
+        document.querySelectorAll('.popup-menu').forEach(win => {
+            win.addEventListener('mousedown', () => bringToFront(win));
+            win.addEventListener('touchstart', () => bringToFront(win), { passive: true });
+        });
+
+        document.querySelectorAll('[data-drag-target]').forEach(handle => {
+            const targetId = handle.getAttribute('data-drag-target');
+            const targetEl = document.getElementById(targetId);
+            if (!targetEl) return;
+
+            let isDragging = false;
+            let startX = 0, startY = 0;
+            let origLeft = 0, origTop = 0;
+
+            function onStart(clientX, clientY) {
+                isDragging = true;
+                bringToFront(targetEl);
+                const rect = targetEl.getBoundingClientRect();
+                targetEl.style.left = rect.left + 'px';
+                targetEl.style.top = rect.top + 'px';
+                targetEl.style.right = 'auto';
+                targetEl.style.bottom = 'auto';
+                targetEl.style.transform = 'none';
+
+                startX = clientX;
+                startY = clientY;
+                origLeft = rect.left;
+                origTop = rect.top;
+            }
+
+            function onMove(clientX, clientY) {
+                if (!isDragging) return;
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+
+                let newLeft = origLeft + dx;
+                let newTop = origTop + dy;
+
+                const maxLeft = window.innerWidth - 60;
+                const maxTop = window.innerHeight - 50;
+                newLeft = Math.max(-targetEl.offsetWidth + 60, Math.min(newLeft, maxLeft));
+                newTop = Math.max(0, Math.min(newTop, maxTop));
+
+                targetEl.style.left = newLeft + 'px';
+                targetEl.style.top = newTop + 'px';
+            }
+
+            function onEnd() {
+                isDragging = false;
+            }
+
+            handle.addEventListener('mousedown', (e) => {
+                if (e.target.closest('button, a, input, select')) return;
+                e.preventDefault();
+                onStart(e.clientX, e.clientY);
+            });
+
+            window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+            window.addEventListener('mouseup', onEnd);
+
+            handle.addEventListener('touchstart', (e) => {
+                if (e.target.closest('button, a, input, select')) return;
+                const t = e.touches[0];
+                onStart(t.clientX, t.clientY);
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const t = e.touches[0];
+                onMove(t.clientX, t.clientY);
+            }, { passive: true });
+
+            window.addEventListener('touchend', onEnd);
+        });
+
+        // Открытие и закрытие всплывающих окон
+        function togglePopup(popup) {
+            const willOpen = !popup.classList.contains('active');
+            if (willOpen) {
+                popup.classList.add('active');
+                bringToFront(popup);
+            } else {
+                popup.classList.remove('active');
+            }
+        }
+
+        historyToggleBtn.addEventListener('click', () => togglePopup(historyPopup));
+        volumeToggleBtn.addEventListener('click', () => togglePopup(volumePopup));
+        paletteToggleBtn.addEventListener('click', () => togglePopup(palettePopup));
+
+        document.querySelectorAll('[data-close]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-close');
+                document.getElementById(id)?.classList.remove('active');
+            });
+        });
+
+        // ================= ИСТОРИЯ БРОСКОВ =================
+        clearHistoryBtn.addEventListener('click', () => {
+            rollHistory = [];
+            updateHistoryUI();
+        });
+
+        function addCurrentRollToHistory(rolledDiceData, mode) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const modeLabel = mode === 'fast' ? '⚡' : mode === 'slow' ? '🐢' : '🎲';
+            rollHistory.unshift({ time: timeStr, dice: rolledDiceData, modeLabel });
+            if (rollHistory.length > 20) rollHistory.length = 20;
+            updateHistoryUI();
+        }
+
+        function updateHistoryUI() {
+            if (rollHistory.length === 0) {
+                historyList.innerHTML = '<div style="color: #94a3b8; font-size: 0.8rem; text-align: center; padding: 10px;">Бросков еще не было</div>';
+                return;
+            }
+
+            historyList.innerHTML = '';
+            rollHistory.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'history-item';
+
+                const colorsContainer = document.createElement('div');
+                colorsContainer.className = 'history-colors';
+
+                item.dice.forEach(d => {
+                    const dot = document.createElement('div');
+                    dot.className = 'history-dot';
+                    dot.style.backgroundColor = d.hex;
+                    dot.title = d.name;
+                    colorsContainer.appendChild(dot);
+                });
+
+                const rightBox = document.createElement('div');
+                rightBox.style.display = 'flex';
+                rightBox.style.alignItems = 'center';
+                rightBox.style.gap = '6px';
+
+                const badge = document.createElement('span');
+                badge.className = 'history-badge';
+                badge.textContent = item.modeLabel;
+
+                const timeEl = document.createElement('span');
+                timeEl.style.color = '#94a3b8';
+                timeEl.style.fontSize = '0.74rem';
+                timeEl.textContent = item.time;
+
+                rightBox.appendChild(badge);
+                rightBox.appendChild(timeEl);
+
+                el.appendChild(colorsContainer);
+                el.appendChild(rightBox);
+                historyList.appendChild(el);
+            });
+        }
+
+        // ================= ЗВУКИ =================
+        function stopAllSounds() {
+            if (stopSoundTimeout) {
+                clearTimeout(stopSoundTimeout);
+                stopSoundTimeout = null;
+            }
+            if (customAudio) {
+                customAudio.pause();
+                customAudio.currentTime = 0;
+            }
+            activeOscillators.forEach(osc => {
+                try { osc.stop(); } catch (e) {}
+            });
+            activeOscillators = [];
+        }
+
+        function playTickSound(pitchOffset = 0) {
+            const soundType = soundSelect.value;
+            if (soundType === 'mute' || soundType === 'upload_sound') return;
+
+            const vol = parseFloat(volumeRange.value) * 0.45;
+            if (vol <= 0) return;
+
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520 + pitchOffset, now);
+            gain.gain.setValueAtTime(vol * 0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.035);
+            activeOscillators.push(osc);
+        }
+
+        function playRollSound(speed = 'normal') {
+            stopAllSounds();
+            const soundType = soundSelect.value;
+            if (soundType === 'mute' || soundType === 'upload_sound') return;
+
+            const vol = parseFloat(volumeRange.value);
+            const cutTime = speed === 'fast' ? 200 : speed === 'step' ? 320 : 480;
+
+            if (soundType === 'custom' && customAudio) {
+                customAudio.volume = vol;
+                customAudio.play().catch(() => {});
+                stopSoundTimeout = setTimeout(() => stopAllSounds(), cutTime);
+                return;
+            }
+
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const now = audioCtx.currentTime;
+
+            if (soundType === 'bubble') {
+                const count = speed === 'step' ? 1 : 4;
+                for (let idx = 0; idx < count; idx++) {
+                    const delay = idx * 0.08;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(320 + idx * 140, now + delay);
+                    osc.frequency.exponentialRampToValueAtTime(720 + idx * 160, now + delay + 0.07);
+                    gain.gain.setValueAtTime(0.25 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.08);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.09);
+                    activeOscillators.push(osc);
+                }
+            } else if (soundType === 'dice') {
+                const count = speed === 'step' ? 1 : 4;
+                for (let idx = 0; idx < count; idx++) {
+                    const delay = idx * 0.07;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(280 + idx * 65, now + delay);
+                    osc.frequency.exponentialRampToValueAtTime(90, now + delay + 0.06);
+                    gain.gain.setValueAtTime(0.3 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.065);
+                    activeOscillators.push(osc);
+                }
+            } else if (soundType === 'roulette') {
+                const ticks = speed === 'step' ? 2 : 8;
+                for (let i = 0; i < ticks; i++) {
+                    const delay = i * 0.03;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, now + delay);
+                    gain.gain.setValueAtTime(0.2 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.025);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.03);
+                    activeOscillators.push(osc);
+                }
+            } else if (soundType === 'magic') {
+                const notes = speed === 'step' ? [783.99] : [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const delay = idx * 0.06;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + delay);
+                    gain.gain.setValueAtTime(0.18 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.22);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.24);
+                    activeOscillators.push(osc);
+                });
+            } else if (soundType === 'retro') {
+                const notes = speed === 'step' ? [523.25] : [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, idx) => {
+                    const delay = idx * 0.05;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(freq, now + delay);
+                    gain.gain.setValueAtTime(0.1 * vol, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.065);
+                    activeOscillators.push(osc);
+                });
+            } else if (soundType === 'space') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.22);
+                gain.gain.setValueAtTime(0.25 * vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.28);
+                activeOscillators.push(osc);
+            }
+        }
+
+        // ================= ПЕРЕРАБОТАННАЯ ЛОГИКА РОЛЛОВ =================
+        function clearActiveRollProcesses() {
+            activeTimers.forEach(id => clearTimeout(id));
+            activeTimers = [];
+            activeIntervals.forEach(id => clearInterval(id));
+            activeIntervals = [];
+            rollBtn.classList.remove('btn-active-mode');
+            fastRollBtn.classList.remove('btn-active-mode');
+            slowRollBtn.classList.remove('btn-active-mode');
+        }
+
+        function getRandomColor(excludeHex = null) {
+            let pool = diceColors;
+            if (excludeHex) {
+                pool = diceColors.filter(c => c.hex !== excludeHex);
+            }
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function createBaseDice() {
+            const diceEl = document.createElement('div');
+            diceEl.className = 'dice';
+            const dot = document.createElement('div');
+            dot.className = 'dice-dot';
+            diceEl.appendChild(dot);
+            return diceEl;
+        }
+
+        function finalizeDice(diceEl, colorObj, animDuration) {
+            const animType = animSelect.value;
+            diceEl.classList.remove('rolling');
+            diceEl.style.backgroundColor = colorObj.hex;
+            diceEl.style.setProperty('--anim-dur', `${animDuration}s`);
+            void diceEl.offsetWidth; // перезапуск CSS-анимации
+            diceEl.classList.add(`anim-${animType}`, 'locked');
+        }
+
+        function rollDice(withSound = true, mode = 'normal', saveHistory = true) {
+            clearActiveRollProcesses();
+            currentRollId++;
+            const rollId = currentRollId;
+
+            const count = parseInt(diceCountSelect.value, 10);
+            diceArena.innerHTML = '';
+
+            // Заранее генерируем финальные цвета
+            const finalColors = Array.from({ length: count }, () => getRandomColor());
+            const diceElements = [];
+
+            for (let i = 0; i < count; i++) {
+                const el = createBaseDice();
+                el.style.backgroundColor = getRandomColor().hex;
+                diceArena.appendChild(el);
+                diceElements.push(el);
+            }
+
+            // 1. БЫСТРЫЙ РОЛЛ (мгновенный выброс)
+            if (mode === 'fast') {
+                fastRollBtn.classList.add('btn-active-mode');
+                if (withSound) playRollSound('fast');
+
+                diceElements.forEach((el, idx) => {
+                    finalizeDice(el, finalColors[idx], 0.16);
+                });
+
+                const t = setTimeout(() => {
+                    if (rollId === currentRollId) fastRollBtn.classList.remove('btn-active-mode');
+                }, 220);
+                activeTimers.push(t);
+
+                if (saveHistory) addCurrentRollToHistory(finalColors, 'fast');
+                return;
+            }
+
+            // 2. ОБЫЧНЫЙ РОЛЛ (интенсивное перемешивание 0.45 сек, затем каскадная остановка)
+            if (mode === 'normal') {
+                rollBtn.classList.add('btn-active-mode');
+                diceElements.forEach(el => el.classList.add('rolling'));
+
+                let lastColorHex = null;
+                const shuffleInt = setInterval(() => {
+                    if (rollId !== currentRollId) return;
+                    diceElements.forEach(el => {
+                        if (!el.classList.contains('locked')) {
+                            const nextCol = getRandomColor(lastColorHex);
+                            lastColorHex = nextCol.hex;
+                            el.style.backgroundColor = nextCol.hex;
+                        }
+                    });
+                    if (withSound) playTickSound(120);
+                }, 65);
+                activeIntervals.push(shuffleInt);
+
+                diceElements.forEach((el, idx) => {
+                    const stopDelay = 320 + idx * 75;
+                    const t = setTimeout(() => {
+                        if (rollId !== currentRollId) return;
+                        if (idx === 0 && withSound) playRollSound('normal');
+                        finalizeDice(el, finalColors[idx], 0.42);
+
+                        if (idx === count - 1) {
+                            clearInterval(shuffleInt);
+                            rollBtn.classList.remove('btn-active-mode');
+                            if (saveHistory) addCurrentRollToHistory(finalColors, 'normal');
+                        }
+                    }, stopDelay);
+                    activeTimers.push(t);
+                });
+                return;
+            }
+
+            // 3. МЕДЛЕННЫЙ РОЛЛ (режим рулетки с замедлением по каждому кубику)
+            if (mode === 'slow') {
+                slowRollBtn.classList.add('btn-active-mode');
+                diceElements.forEach(el => el.classList.add('rolling'));
+
+                // Фоновая прокрутка для еще не остановившихся кубиков
+                const bgShuffle = setInterval(() => {
+                    if (rollId !== currentRollId) return;
+                    diceElements.forEach(el => {
+                        if (!el.classList.contains('locked')) {
+                            el.style.backgroundColor = getRandomColor().hex;
+                        }
+                    });
+                }, 90);
+                activeIntervals.push(bgShuffle);
+
+                // Поочередная интригующая остановка каждого кубика
+                diceElements.forEach((el, idx) => {
+                    const baseDelay = 550 + idx * 650;
+
+                    // Несколько замедляющихся тиков перед остановкой конкретного кубика
+                    [baseDelay - 260, baseDelay - 130].forEach((tickTime, stepIdx) => {
+                        const tickTimer = setTimeout(() => {
+                            if (rollId !== currentRollId) return;
+                            el.style.backgroundColor = getRandomColor().hex;
+                            if (withSound) playTickSound(stepIdx * 150);
+                        }, tickTime);
+                        activeTimers.push(tickTimer);
+                    });
+
+                    const lockTimer = setTimeout(() => {
+                        if (rollId !== currentRollId) return;
+                        if (withSound) playRollSound('step');
+                        finalizeDice(el, finalColors[idx], 0.55);
+
+                        if (idx === count - 1) {
+                            clearInterval(bgShuffle);
+                            slowRollBtn.classList.remove('btn-active-mode');
+                            if (saveHistory) addCurrentRollToHistory(finalColors, 'slow');
+                        }
+                    }, baseDelay);
+                    activeTimers.push(lockTimer);
+                });
+            }
+        }
+
+        rollBtn.addEventListener('click', () => rollDice(true, 'normal', true));
+        fastRollBtn.addEventListener('click', () => rollDice(true, 'fast', true));
+        slowRollBtn.addEventListener('click', () => rollDice(true, 'slow', true));
+
+        diceCountSelect.addEventListener('change', () => rollDice(true, 'fast', false));
+        animSelect.addEventListener('change', () => rollDice(true, 'fast', false));
+
+        volumeRange.addEventListener('input', () => {
+            if (customAudio) customAudio.volume = parseFloat(volumeRange.value);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !['BUTTON', 'SELECT', 'INPUT'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                rollDice(true, 'normal', true);
+            }
+        });
+
+        soundSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'upload_sound') {
+                soundSelect.value = lastValidSound;
+                soundInput.click();
+            } else {
+                lastValidSound = e.target.value;
+                playRollSound('normal');
+            }
+        });
+
+        colorPickerInput.addEventListener('input', (e) => {
+            const col = e.target.value;
+            bgVideo.style.display = 'none';
+            bgVideo.src = '';
+            document.body.style.background = `radial-gradient(circle at center, ${col}44 0%, #05070b 100%)`;
+            rollBtn.style.background = `linear-gradient(135deg, ${col} 0%, #0f172a 100%)`;
+        });
+
+        themeSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val === 'upload_image') {
+                themeSelect.value = lastValidTheme;
+                bgImageInput.click();
+                return;
+            }
+            if (val === 'upload_video') {
+                themeSelect.value = lastValidTheme;
+                bgVideoInput.click();
+                return;
+            }
+
+            lastValidTheme = val;
+
+            if (savedBackgrounds[val]) {
+                const bg = savedBackgrounds[val];
+                if (bg.type === 'image') {
+                    bgVideo.style.display = 'none';
+                    bgVideo.src = '';
+                    document.body.style.background = `url('${bg.url}') center / cover no-repeat fixed`;
+                } else if (bg.type === 'video') {
+                    document.body.style.background = '#090d16';
+                    bgVideo.src = bg.url;
+                    bgVideo.style.display = 'block';
+                }
+                return;
+            }
+
+            bgVideo.style.display = 'none';
+            bgVideo.src = '';
+            applyTheme(val);
+        });
+
+        function applyTheme(theme) {
+            let btnBg = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
+            if (theme === 'space') {
+                document.body.style.background = 'radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%)';
+                btnBg = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
+            } else if (theme === 'cyber') {
+                document.body.style.background = 'linear-gradient(135deg, #09090b 0%, #3b0764 50%, #831843 100%)';
+                btnBg = 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)';
+            } else if (theme === 'sunset') {
+                document.body.style.background = 'linear-gradient(180deg, #2e1065 0%, #701a75 50%, #9a3412 100%)';
+                btnBg = 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)';
+            } else if (theme === 'neon') {
+                document.body.style.background = 'linear-gradient(135deg, #022c22 0%, #064e3b 50%, #022f26 100%)';
+                btnBg = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            } else if (theme === 'saturn') {
+                document.body.style.background = 'radial-gradient(ellipse at center, #fef08a 0%, #d97706 40%, #451a03 100%)';
+                btnBg = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+            } else if (theme === 'forest') {
+                document.body.style.background = 'linear-gradient(180deg, #052e16 0%, #15803d 60%, #166534 100%)';
+                btnBg = 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)';
+            } else if (theme === 'neptune') {
+                document.body.style.background = 'linear-gradient(135deg, #020617 0%, #1d4ed8 50%, #06b6d4 100%)';
+                btnBg = 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)';
+            } else if (theme === 'cyberarctic') {
+                document.body.style.background = 'linear-gradient(135deg, #082f49 0%, #0369a1 50%, #164e63 100%)';
+                btnBg = 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)';
+            } else if (theme === 'pinkneon') {
+                document.body.style.background = 'linear-gradient(135deg, #4c0519 0%, #be185d 50%, #831843 100%)';
+                btnBg = 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)';
+            } else if (theme === 'fire') {
+                document.body.style.background = 'linear-gradient(135deg, #450a0a 0%, #c2410c 50%, #7c2d12 100%)';
+                btnBg = 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)';
+            } else if (theme === 'gold') {
+                document.body.style.background = 'linear-gradient(135deg, #18181b 0%, #713f12 50%, #27272a 100%)';
+                btnBg = 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)';
+            }
+            rollBtn.style.background = btnBg;
+        }
+
+        soundInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            stopAllSounds();
+            if (customAudioUrl) URL.revokeObjectURL(customAudioUrl);
+            customAudioUrl = URL.createObjectURL(file);
+            customAudio = new Audio(customAudioUrl);
+            customAudio.volume = parseFloat(volumeRange.value);
+
+            const group = document.getElementById('customSoundGroup');
+            let customOpt = document.getElementById('customSoundOption');
+            if (!customOpt) {
+                customOpt = document.createElement('option');
+                customOpt.id = 'customSoundOption';
+                customOpt.value = 'custom';
+                group.insertBefore(customOpt, group.firstChild);
+            }
+            const shortName = file.name.length > 18 ? file.name.slice(0, 15) + '...' : file.name;
+            customOpt.textContent = `🎵 ${shortName}`;
+            soundSelect.value = 'custom';
+            lastValidSound = 'custom';
+            playRollSound('normal');
+        });
+
+        bgImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            bgVideo.style.display = 'none';
+            bgVideo.src = '';
+
+            const url = URL.createObjectURL(file);
+            const key = 'bg_' + Date.now();
+            savedBackgrounds[key] = { type: 'image', url: url };
+
+            document.body.style.background = `url('${url}') center / cover no-repeat fixed`;
+
+            const group = document.getElementById('customBgsGroup');
+            const newOpt = document.createElement('option');
+            newOpt.value = key;
+            newOpt.textContent = `🖼️ ${file.name.slice(0, 16)}`;
+            group.insertBefore(newOpt, group.firstChild);
+
+            themeSelect.value = key;
+            lastValidTheme = key;
+            bgImageInput.value = '';
+        });
+
+        bgVideoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.body.style.background = '#090d16';
+
+            const url = URL.createObjectURL(file);
+            const key = 'bg_' + Date.now();
+            savedBackgrounds[key] = { type: 'video', url: url };
+
+            bgVideo.src = url;
+            bgVideo.style.display = 'block';
+
+            const group = document.getElementById('customBgsGroup');
+            const newOpt = document.createElement('option');
+            newOpt.value = key;
+            newOpt.textContent = `🎬 ${file.name.slice(0, 16)}`;
+            group.insertBefore(newOpt, group.firstChild);
+
+            themeSelect.value = key;
+            lastValidTheme = key;
+            bgVideoInput.value = '';
+        });
+
+        applyTheme('space');
+        rollDice(false, 'fast', false);
+    </script>
+</body>
+</html>
