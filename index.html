@@ -25,6 +25,7 @@
             padding: 20px;
             color: #ffffff;
             transition: background 0.5s ease;
+            overflow: hidden;
         }
 
         #bgVideo {
@@ -37,7 +38,7 @@
             display: none;
         }
 
-        /* Верхняя панель управления в правом углу */
+        /* Верхняя панель управления */
         .top-controls-bar {
             position: fixed;
             top: 20px;
@@ -45,7 +46,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            z-index: 10;
+            z-index: 50;
         }
 
         .top-icon-btn {
@@ -62,7 +63,7 @@
             font-size: 1.2rem;
             backdrop-filter: blur(10px);
             transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-            position: relative;
+            user-select: none;
         }
 
         .top-icon-btn:hover {
@@ -75,32 +76,48 @@
             background: linear-gradient(135deg, #ef4444, #3b82f6, #a855f7, #22c55e);
         }
 
+        /* Перетаскиваемые всплывающие окна */
         .popup-menu {
-            position: absolute;
-            top: 56px;
-            right: 0;
-            background: rgba(15, 23, 42, 0.94);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.22);
             border-radius: 18px;
-            padding: 16px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(16px);
+            padding: 14px 16px 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(18px);
             display: flex;
             flex-direction: column;
             gap: 12px;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(-8px);
-            transition: all 0.25s ease;
-            min-width: 260px;
+            pointer-events: none;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            min-width: 270px;
             text-align: left;
-            z-index: 20;
+            z-index: 40;
         }
 
         .popup-menu.active {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .drag-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: grab;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            user-select: none;
+            touch-action: none;
+        }
+
+        .drag-header:active {
+            cursor: grabbing;
         }
 
         .popup-title {
@@ -109,22 +126,76 @@
             color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
+        .drag-dots {
+            color: #64748b;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .close-popup-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: #94a3b8;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .close-popup-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #ffffff;
+        }
+
+        /* Главная перетаскиваемая карточка */
         .main-card {
-            position: relative;
-            z-index: 1;
-            width: 100%;
+            position: fixed;
+            z-index: 10;
+            width: calc(100% - 40px);
             max-width: 580px;
-            background: rgba(15, 23, 42, 0.78);
-            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 28px;
-            padding: 34px 30px;
+            padding: 24px 30px 32px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             text-align: center;
+        }
+
+        .main-drag-handle {
+            width: 100%;
+            cursor: grab;
+            padding: 4px 0 10px;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .main-drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .drag-pill {
+            width: 44px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.22);
+            border-radius: 99px;
+            margin: 0 auto 12px;
+            transition: background 0.2s;
+        }
+
+        .main-drag-handle:hover .drag-pill {
+            background: rgba(255, 255, 255, 0.45);
         }
 
         h1 {
@@ -143,6 +214,7 @@
         .header-icon {
             font-size: 2.1rem;
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+            -webkit-text-fill-color: initial;
         }
 
         .top-credit {
@@ -151,7 +223,7 @@
             letter-spacing: 0.14em;
             text-transform: uppercase;
             color: #94a3b8;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .top-credit a {
@@ -255,8 +327,23 @@
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.35);
             position: relative;
             user-select: none;
+            transition: background-color 0.08s linear, transform 0.15s ease, box-shadow 0.2s ease;
             animation-duration: var(--anim-dur, 0.45s);
             animation-fill-mode: both;
+        }
+
+        .dice.rolling {
+            animation: diceShake 0.14s infinite alternate ease-in-out;
+            box-shadow: 0 0 22px rgba(255, 255, 255, 0.45);
+        }
+
+        .dice.locked {
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 18px rgba(255, 255, 255, 0.35);
+        }
+
+        @keyframes diceShake {
+            0% { transform: scale(0.95) rotate(-5deg); }
+            100% { transform: scale(1.04) rotate(5deg); }
         }
 
         .dice-dot {
@@ -267,39 +354,39 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
         }
 
-        /* Анимации кубиков */
+        /* Анимации финиша кубиков */
         .anim-bounce { animation-name: animBounce; animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes animBounce {
-            0% { transform: scale(0.3) rotate(-25deg); opacity: 0; }
-            70% { transform: scale(1.1) rotate(5deg); opacity: 1; }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            0% { transform: scale(0.6) rotate(-15deg); }
+            65% { transform: scale(1.14) rotate(4deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
         .anim-spin { animation-name: animSpin; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
         @keyframes animSpin {
-            0% { transform: scale(0.2) rotate(-360deg); opacity: 0; }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            0% { transform: scale(0.5) rotate(-360deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
         .anim-flip { animation-name: animFlip; animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes animFlip {
-            0% { transform: perspective(400px) rotateY(180deg) scale(0.5); opacity: 0; }
-            100% { transform: perspective(400px) rotateY(0deg) scale(1); opacity: 1; }
+            0% { transform: perspective(400px) rotateY(180deg) scale(0.7); }
+            100% { transform: perspective(400px) rotateY(0deg) scale(1); }
         }
 
         .anim-drop { animation-name: animDrop; animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes animDrop {
-            0% { transform: translateY(-45px) scale(0.8); opacity: 0; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
+            0% { transform: translateY(-35px) scale(0.85); }
+            100% { transform: translateY(0) scale(1); }
         }
 
         .anim-flash { animation-name: animFlash; animation-timing-function: ease-out; }
         @keyframes animFlash {
-            0% { transform: scale(1.35); filter: brightness(2.2); opacity: 0; }
-            100% { transform: scale(1); filter: brightness(1); opacity: 1; }
+            0% { transform: scale(1.32); filter: brightness(2.2); }
+            100% { transform: scale(1); filter: brightness(1); }
         }
 
-        /* Кнопка броска */
+        /* Кнопки броска */
         #rollBtn {
             width: 100%;
             padding: 16px;
@@ -344,9 +431,14 @@
         }
         .speed-btn:active { transform: scale(0.97); }
 
-        /* Стили для истории бросков */
+        .btn-active-mode {
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.45) !important;
+        }
+
+        /* История бросков */
         .history-list {
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -363,6 +455,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
         }
 
         .history-colors {
@@ -372,10 +465,18 @@
         }
 
         .history-dot {
-            width: 12px;
-            height: 12px;
+            width: 13px;
+            height: 13px;
             border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+
+        .history-badge {
+            font-size: 0.68rem;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
         }
 
         .clear-history-btn {
@@ -383,13 +484,12 @@
             border: 1px solid rgba(239, 68, 68, 0.4);
             color: #fca5a5;
             border-radius: 8px;
-            padding: 6px;
+            padding: 7px;
             font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
             transition: background 0.2s;
-            margin-top: 4px;
         }
 
         .clear-history-btn:hover {
@@ -425,627 +525,69 @@
 
     <video id="bgVideo" autoplay loop muted playsinline></video>
 
-    <!-- Верхняя панель управления (История + Звук + Палитра) -->
+    <!-- Верхняя панель кнопок -->
     <div class="top-controls-bar">
-        <!-- Кнопка истории бросков -->
-        <div class="top-icon-btn" id="historyToggleBtn" title="История бросков">
-            📜
-            <div class="popup-menu" id="historyPopup" style="min-width: 280px;">
-                <div class="popup-title">📜 История бросков</div>
-                <div class="history-list" id="historyList">
-                    <div style="color: #94a3b8; font-size: 0.8rem; text-align: center; padding: 10px;">Бросков еще не было</div>
-                </div>
-                <button type="button" class="clear-history-btn" id="clearHistoryBtn">Очистить историю</button>
-            </div>
-        </div>
-
-        <!-- Микшер громкости и выбор звука -->
-        <div class="top-icon-btn" id="volumeToggleBtn" title="Звуки и громкость">
-            🔊
-            <div class="popup-menu" id="volumePopup" style="min-width: 260px;">
-                <div class="popup-title">🔊 Громкость звука</div>
-                <input type="range" id="volumeRange" min="0" max="1" step="0.05" value="0.7">
-
-                <div class="popup-title" style="margin-top: 4px;">🎵 Звук броска</div>
-                <select id="soundSelect" class="styled-select">
-                    <optgroup label="Встроенные звуки">
-                        <option value="bubble" selected>🫧 Бабл-гам (Пузырьки)</option>
-                        <option value="dice">🎲 Классические кубики</option>
-                        <option value="roulette">🎰 Колесо фортуны</option>
-                        <option value="magic">✨ Магия (Колокольчики)</option>
-                        <option value="retro">👾 8-бит Аркада</option>
-                        <option value="space">🛸 Космический лазер</option>
-                        <option value="mute">🔇 Без звука</option>
-                    </optgroup>
-                    <optgroup label="Свой файл" id="customSoundGroup">
-                        <option value="upload_sound">📁 Загрузить свой звук...</option>
-                    </optgroup>
-                </select>
-            </div>
-        </div>
-
-        <!-- Палитра тем и фонов -->
-        <div class="top-icon-btn palette-btn" id="paletteToggleBtn" title="Палитра тем и фонов">
-            🎨
-            <div class="popup-menu" id="palettePopup" style="min-width: 260px;">
-                <div class="popup-title">🎨 Палитра и цвет</div>
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(30,41,59,0.7); padding: 8px 12px; border-radius: 12px;">
-                    <span style="font-size: 0.82rem; font-weight: 600;">RGB Цветовой тон</span>
-                    <input type="color" id="colorPickerInput" value="#6366f1" style="width: 32px; height: 32px; border: none; cursor: pointer; background: none;">
-                </div>
-
-                <div class="popup-title" style="margin-top: 4px;">🌌 Тема оформления</div>
-                <select id="themeSelect" class="styled-select">
-                    <optgroup label="Космические темы">
-                        <option value="space">🌌 [🟣 Космос] Звезды</option>
-                        <option value="saturn">🪐 [🟠 Сатурн] Планета</option>
-                        <option value="neptune">🌊 [🔵 Нептун] Океан</option>
-                    </optgroup>
-                    <optgroup label="Неоновые & Кибер">
-                        <option value="cyber">⚡ [🟣 Киберпанк] Неон</option>
-                        <option value="neon">🟢 [🟢 Неон] Изумруд</option>
-                        <option value="cyberarctic">🧊 [🩵 Арктика] Лед</option>
-                        <option value="pinkneon">💖 [🩷 Розовый] Клуб</option>
-                    </optgroup>
-                    <optgroup label="Природа & Атмосфера">
-                        <option value="sunset">🌅 [🟠 Закат] Градиент</option>
-                        <option value="forest">🌲 [🟢 Лес] Мох</option>
-                        <option value="fire">🔥 [🔴 Огонь] Жар</option>
-                        <option value="gold">✨ [🟡 Золото] Нуар</option>
-                    </optgroup>
-                    <optgroup label="Мои фоны" id="customBgsGroup">
-                        <option value="upload_image">🖼️ Загрузить фото...</option>
-                        <option value="upload_video">🎬 Загрузить видео...</option>
-                    </optgroup>
-                </select>
-            </div>
-        </div>
+        <button type="button" class="top-icon-btn" id="historyToggleBtn" title="История бросков">📜</button>
+        <button type="button" class="top-icon-btn" id="volumeToggleBtn" title="Звуки и громкость">🔊</button>
+        <button type="button" class="top-icon-btn palette-btn" id="paletteToggleBtn" title="Палитра тем и фонов">🎨</button>
     </div>
 
-    <!-- Скрытые файлы -->
-    <input type="file" id="soundInput" accept="audio/*">
-    <input type="file" id="bgImageInput" accept="image/*">
-    <input type="file" id="bgVideoInput" accept="video/*">
-
-    <div class="main-card">
-        <h1><span class="header-icon">🎲</span> Color Dice</h1>
-        <div class="top-credit">
-            MADE BY <a href="https://www.tiktok.com/@groundoffc" target="_blank">GROUND</a>
+    <!-- Перетаскиваемое окно: История бросков -->
+    <div class="popup-menu" id="historyPopup" style="min-width: 290px; right: 136px;">
+        <div class="drag-header" data-drag-target="historyPopup">
+            <div class="popup-title"><span class="drag-dots">⋮⋮</span> 📜 История бросков</div>
+            <button type="button" class="close-popup-btn" data-close="historyPopup">✕</button>
         </div>
-
-        <div class="settings-section">
-            <div class="control-group">
-                <span class="control-label">🎲 Количество кубиков</span>
-                <select id="diceCountSelect" class="styled-select">
-                    <option value="1">1 кубик</option>
-                    <option value="2">2 кубика</option>
-                    <option value="3" selected>3 кубика</option>
-                    <option value="4">4 кубика</option>
-                    <option value="5">5 кубиков</option>
-                    <option value="6">6 кубиков</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <span class="control-label">✨ Анимация квадратиков</span>
-                <select id="animSelect" class="styled-select">
-                    <option value="bounce" selected>🏀 Пружинка</option>
-                    <option value="spin">🌀 Поворот 360°</option>
-                    <option value="flip">🃏 Переворот 3D</option>
-                    <option value="drop">⬇️ Падение сверху</option>
-                    <option value="flash">⚡ Вспышка</option>
-                </select>
-            </div>
+        <div class="history-list" id="historyList">
+            <div style="color: #94a3b8; font-size: 0.8rem; text-align: center; padding: 10px;">Бросков еще не было</div>
         </div>
-
-        <div id="diceArena" class="dice-arena"></div>
-
-        <!-- Кнопка броска -->
-        <button type="button" id="rollBtn">БРОСИТЬ !</button>
-
-        <!-- Кнопки быстрого и медленного ролла -->
-        <div class="speed-buttons-grid">
-            <button type="button" id="fastRollBtn" class="speed-btn">⚡ Быстрый ролл</button>
-            <button type="button" id="slowRollBtn" class="speed-btn">🐢 Медленный ролл</button>
-        </div>
+        <button type="button" class="clear-history-btn" id="clearHistoryBtn">Очистить историю</button>
     </div>
 
-    <script>
-        const diceColors = [
-            { name: 'КРАСНЫЙ',    hex: '#ef4444' },
-            { name: 'ОРАНЖЕВЫЙ',  hex: '#f97316' },
-            { name: 'ЖЕЛТЫЙ',     hex: '#eab308' },
-            { name: 'ЗЕЛЕНЫЙ',    hex: '#22c55e' },
-            { name: 'СИНИЙ',      hex: '#3b82f6' },
-            { name: 'ФИОЛЕТОВЫЙ', hex: '#a855f7' }
-        ];
+    <!-- Перетаскиваемое окно: Звук и громкость -->
+    <div class="popup-menu" id="volumePopup" style="min-width: 265px; right: 78px;">
+        <div class="drag-header" data-drag-target="volumePopup">
+            <div class="popup-title"><span class="drag-dots">⋮⋮</span> 🔊 Звук и микшер</div>
+            <button type="button" class="close-popup-btn" data-close="volumePopup">✕</button>
+        </div>
+        <div class="popup-title">Громкость</div>
+        <input type="range" id="volumeRange" min="0" max="1" step="0.05" value="0.7">
 
-        const diceArena = document.getElementById('diceArena');
-        const diceCountSelect = document.getElementById('diceCountSelect');
-        const animSelect = document.getElementById('animSelect');
-        const soundSelect = document.getElementById('soundSelect');
-        const rollBtn = document.getElementById('rollBtn');
-        const fastRollBtn = document.getElementById('fastRollBtn');
-        const slowRollBtn = document.getElementById('slowRollBtn');
-        const themeSelect = document.getElementById('themeSelect');
-        const soundInput = document.getElementById('soundInput');
-        const volumeRange = document.getElementById('volumeRange');
-        
-        const historyToggleBtn = document.getElementById('historyToggleBtn');
-        const historyPopup = document.getElementById('historyPopup');
-        const historyList = document.getElementById('historyList');
-        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        <div class="popup-title" style="margin-top: 4px;">🎵 Звук броска</div>
+        <select id="soundSelect" class="styled-select">
+            <optgroup label="Встроенные звуки">
+                <option value="bubble" selected>🫧 Бабл-гам (Пузырьки)</option>
+                <option value="dice">🎲 Классические кубики</option>
+                <option value="roulette">🎰 Колесо фортуны</option>
+                <option value="magic">✨ Магия (Колокольчики)</option>
+                <option value="retro">👾 8-бит Аркада</option>
+                <option value="space">🛸 Космический лазер</option>
+                <option value="mute">🔇 Без звука</option>
+            </optgroup>
+            <optgroup label="Свой файл" id="customSoundGroup">
+                <option value="upload_sound">📁 Загрузить свой звук...</option>
+            </optgroup>
+        </select>
+    </div>
 
-        const volumeToggleBtn = document.getElementById('volumeToggleBtn');
-        const volumePopup = document.getElementById('volumePopup');
-        const paletteToggleBtn = document.getElementById('paletteToggleBtn');
-        const palettePopup = document.getElementById('palettePopup');
-        const colorPickerInput = document.getElementById('colorPickerInput');
+    <!-- Перетаскиваемое окно: Палитра и темы -->
+    <div class="popup-menu" id="palettePopup" style="min-width: 265px; right: 20px;">
+        <div class="drag-header" data-drag-target="palettePopup">
+            <div class="popup-title"><span class="drag-dots">⋮⋮</span> 🎨 Темы и цвета</div>
+            <button type="button" class="close-popup-btn" data-close="palettePopup">✕</button>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(30,41,59,0.7); padding: 8px 12px; border-radius: 12px;">
+            <span style="font-size: 0.82rem; font-weight: 600;">RGB Цветовой тон</span>
+            <input type="color" id="colorPickerInput" value="#6366f1" style="width: 32px; height: 32px; border: none; cursor: pointer; background: none;">
+        </div>
 
-        const bgVideo = document.getElementById('bgVideo');
-        const bgImageInput = document.getElementById('bgImageInput');
-        const bgVideoInput = document.getElementById('bgVideoInput');
-
-        let customAudio = null;
-        let customAudioUrl = null;
-        let audioCtx = null;
-        let activeOscillators = [];
-        let stopSoundTimeout = null;
-        let sequentialTimeouts = [];
-        let lastValidSound = 'bubble';
-        let lastValidTheme = 'space';
-        let savedBackgrounds = {};
-        let rollHistory = [];
-
-        // Управление всплывающими меню
-        historyToggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            volumePopup.classList.remove('active');
-            palettePopup.classList.remove('active');
-            historyPopup.classList.toggle('active');
-        });
-
-        volumeToggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            historyPopup.classList.remove('active');
-            palettePopup.classList.remove('active');
-            volumePopup.classList.toggle('active');
-        });
-
-        paletteToggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            historyPopup.classList.remove('active');
-            volumePopup.classList.remove('active');
-            palettePopup.classList.toggle('active');
-        });
-
-        document.addEventListener('click', () => {
-            historyPopup.classList.remove('active');
-            volumePopup.classList.remove('active');
-            palettePopup.classList.remove('active');
-        });
-
-        historyPopup.addEventListener('click', (e) => e.stopPropagation());
-        volumePopup.addEventListener('click', (e) => e.stopPropagation());
-        palettePopup.addEventListener('click', (e) => e.stopPropagation());
-
-        clearHistoryBtn.addEventListener('click', () => {
-            rollHistory = [];
-            updateHistoryUI();
-        });
-
-        function addCurrentRollToHistory(rolledDiceData) {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            rollHistory.unshift({ time: timeStr, dice: rolledDiceData });
-            if (rollHistory.length > 15) rollHistory.length = 15;
-            updateHistoryUI();
-        }
-
-        function updateHistoryUI() {
-            if (rollHistory.length === 0) {
-                historyList.innerHTML = '<div style="color: #94a3b8; font-size: 0.8rem; text-align: center; padding: 10px;">Бросков еще не было</div>';
-                return;
-            }
-
-            historyList.innerHTML = '';
-            rollHistory.forEach(item => {
-                const el = document.createElement('div');
-                el.className = 'history-item';
-
-                const colorsContainer = document.createElement('div');
-                colorsContainer.className = 'history-colors';
-                
-                item.dice.forEach(d => {
-                    const dot = document.createElement('div');
-                    dot.className = 'history-dot';
-                    dot.style.backgroundColor = d.hex;
-                    dot.title = d.name;
-                    colorsContainer.appendChild(dot);
-                });
-
-                const timeEl = document.createElement('span');
-                timeEl.style.color = '#94a3b8';
-                timeEl.style.fontSize = '0.74rem';
-                timeEl.textContent = item.time;
-
-                el.appendChild(colorsContainer);
-                el.appendChild(timeEl);
-                historyList.appendChild(el);
-            });
-        }
-
-        function clearSequentialRoll() {
-            sequentialTimeouts.forEach(id => clearTimeout(id));
-            sequentialTimeouts = [];
-        }
-
-        function stopAllSounds() {
-            if (stopSoundTimeout) {
-                clearTimeout(stopSoundTimeout);
-                stopSoundTimeout = null;
-            }
-            if (customAudio) {
-                customAudio.pause();
-                customAudio.currentTime = 0;
-            }
-            activeOscillators.forEach(osc => {
-                try { osc.stop(); } catch (e) {}
-            });
-            activeOscillators = [];
-        }
-
-        function playRollSound(speed = 'normal') {
-            stopAllSounds();
-            const soundType = soundSelect.value;
-            if (soundType === 'mute' || soundType === 'upload_sound') return;
-
-            const vol = parseFloat(volumeRange.value);
-            const cutTime = speed === 'fast' ? 200 : speed === 'step' ? 350 : 480;
-
-            if (soundType === 'custom' && customAudio) {
-                customAudio.volume = vol;
-                customAudio.play().catch(() => {});
-                stopSoundTimeout = setTimeout(() => stopAllSounds(), cutTime);
-                return;
-            }
-
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            const now = audioCtx.currentTime;
-
-            if (soundType === 'bubble') {
-                const count = speed === 'step' ? 1 : 4;
-                for (let idx = 0; idx < count; idx++) {
-                    const delay = idx * 0.08;
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(320 + idx * 140, now + delay);
-                    osc.frequency.exponentialRampToValueAtTime(720 + idx * 160, now + delay + 0.07);
-                    gain.gain.setValueAtTime(0.25 * vol, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.08);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.09);
-                    activeOscillators.push(osc);
-                }
-            } else if (soundType === 'dice') {
-                const count = speed === 'step' ? 1 : 4;
-                for (let idx = 0; idx < count; idx++) {
-                    const delay = idx * 0.07;
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(280 + idx * 65, now + delay);
-                    osc.frequency.exponentialRampToValueAtTime(90, now + delay + 0.06);
-                    gain.gain.setValueAtTime(0.3 * vol, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.065);
-                    activeOscillators.push(osc);
-                }
-            } else if (soundType === 'roulette') {
-                const ticks = speed === 'step' ? 2 : 8;
-                for (let i = 0; i < ticks; i++) {
-                    const delay = i * 0.03;
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(800, now + delay);
-                    gain.gain.setValueAtTime(0.2 * vol, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.025);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.03);
-                    activeOscillators.push(osc);
-                }
-            } else if (soundType === 'magic') {
-                const notes = speed === 'step' ? [783.99] : [523.25, 659.25, 783.99, 1046.50];
-                notes.forEach((freq, idx) => {
-                    const delay = idx * 0.06;
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, now + delay);
-                    gain.gain.setValueAtTime(0.18 * vol, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.22);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.24);
-                    activeOscillators.push(osc);
-                });
-            } else if (soundType === 'retro') {
-                const notes = speed === 'step' ? [523.25] : [261.63, 329.63, 392.00, 523.25];
-                notes.forEach((freq, idx) => {
-                    const delay = idx * 0.05;
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(freq, now + delay);
-                    gain.gain.setValueAtTime(0.1 * vol, now + delay);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.06);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + delay);
-                    osc.stop(now + delay + 0.065);
-                    activeOscillators.push(osc);
-                });
-            } else if (soundType === 'space') {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(220, now);
-                osc.frequency.exponentialRampToValueAtTime(880, now + 0.22);
-                gain.gain.setValueAtTime(0.25 * vol, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.28);
-                activeOscillators.push(osc);
-            }
-        }
-
-        function createDiceElement(durSeconds, colorObj) {
-            const animType = animSelect.value;
-            const diceEl = document.createElement('div');
-            diceEl.className = `dice anim-${animType}`;
-            diceEl.style.setProperty('--anim-dur', `${durSeconds}s`);
-            diceEl.style.backgroundColor = colorObj.hex;
-
-            const dot = document.createElement('div');
-            dot.className = 'dice-dot';
-            diceEl.appendChild(dot);
-            return diceEl;
-        }
-
-        function rollDice(withSound = true, mode = 'normal') {
-            clearSequentialRoll();
-            const count = parseInt(diceCountSelect.value, 10);
-            diceArena.innerHTML = '';
-
-            let currentRollColors = [];
-
-            if (mode === 'slow') {
-                for (let i = 0; i < count; i++) {
-                    const randomColor = diceColors[Math.floor(Math.random() * diceColors.length)];
-                    currentRollColors.push(randomColor);
-
-                    const tid = setTimeout(() => {
-                        if (withSound) playRollSound('step');
-                        const diceEl = createDiceElement(0.55, randomColor);
-                        diceArena.appendChild(diceEl);
-                    }, i * 550);
-                    sequentialTimeouts.push(tid);
-                }
-                addCurrentRollToHistory(currentRollColors);
-                return;
-            }
-
-            const dur = mode === 'fast' ? 0.18 : 0.45;
-            if (withSound) playRollSound(mode);
-
-            for (let i = 0; i < count; i++) {
-                const randomColor = diceColors[Math.floor(Math.random() * diceColors.length)];
-                currentRollColors.push(randomColor);
-
-                const diceEl = createDiceElement(dur, randomColor);
-                diceArena.appendChild(diceEl);
-            }
-            addCurrentRollToHistory(currentRollColors);
-        }
-
-        rollBtn.addEventListener('click', () => rollDice(true, 'normal'));
-        fastRollBtn.addEventListener('click', () => rollDice(true, 'fast'));
-        slowRollBtn.addEventListener('click', () => rollDice(true, 'slow'));
-
-        diceCountSelect.addEventListener('change', () => rollDice(true, 'normal'));
-        animSelect.addEventListener('change', () => rollDice(true, 'normal'));
-
-        volumeRange.addEventListener('input', () => {
-            if (customAudio) customAudio.volume = parseFloat(volumeRange.value);
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && !['BUTTON', 'SELECT', 'INPUT'].includes(document.activeElement.tagName)) {
-                e.preventDefault();
-                rollDice(true, 'normal');
-            }
-        });
-
-        soundSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'upload_sound') {
-                soundSelect.value = lastValidSound;
-                soundInput.click();
-            } else {
-                lastValidSound = e.target.value;
-                playRollSound('normal');
-            }
-        });
-
-        colorPickerInput.addEventListener('input', (e) => {
-            const col = e.target.value;
-            bgVideo.style.display = 'none';
-            bgVideo.src = '';
-            document.body.style.background = `radial-gradient(circle at center, ${col}44 0%, #05070b 100%)`;
-            rollBtn.style.background = `linear-gradient(135deg, ${col} 0%, #0f172a 100%)`;
-        });
-
-        themeSelect.addEventListener('change', (e) => {
-            const val = e.target.value;
-            if (val === 'upload_image') {
-                themeSelect.value = lastValidTheme;
-                bgImageInput.click();
-                return;
-            }
-            if (val === 'upload_video') {
-                themeSelect.value = lastValidTheme;
-                bgVideoInput.click();
-                return;
-            }
-
-            lastValidTheme = val;
-
-            if (savedBackgrounds[val]) {
-                const bg = savedBackgrounds[val];
-                if (bg.type === 'image') {
-                    bgVideo.style.display = 'none';
-                    bgVideo.src = '';
-                    document.body.style.background = `url('${bg.url}') center / cover no-repeat fixed`;
-                } else if (bg.type === 'video') {
-                    document.body.style.background = '#090d16';
-                    bgVideo.src = bg.url;
-                    bgVideo.style.display = 'block';
-                }
-                return;
-            }
-
-            bgVideo.style.display = 'none';
-            bgVideo.src = '';
-            applyTheme(val);
-        });
-
-        function applyTheme(theme) {
-            let btnBg = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
-            if (theme === 'space') {
-                document.body.style.background = 'radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%)';
-                btnBg = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
-            } else if (theme === 'cyber') {
-                document.body.style.background = 'linear-gradient(135deg, #09090b 0%, #3b0764 50%, #831843 100%)';
-                btnBg = 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)';
-            } else if (theme === 'sunset') {
-                document.body.style.background = 'linear-gradient(180deg, #2e1065 0%, #701a75 50%, #9a3412 100%)';
-                btnBg = 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)';
-            } else if (theme === 'neon') {
-                document.body.style.background = 'linear-gradient(135deg, #022c22 0%, #064e3b 50%, #022f26 100%)';
-                btnBg = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-            } else if (theme === 'saturn') {
-                document.body.style.background = 'radial-gradient(ellipse at center, #fef08a 0%, #d97706 40%, #451a03 100%)';
-                btnBg = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
-            } else if (theme === 'forest') {
-                document.body.style.background = 'linear-gradient(180deg, #052e16 0%, #15803d 60%, #166534 100%)';
-                btnBg = 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)';
-            } else if (theme === 'neptune') {
-                document.body.style.background = 'linear-gradient(135deg, #020617 0%, #1d4ed8 50%, #06b6d4 100%)';
-                btnBg = 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)';
-            } else if (theme === 'cyberarctic') {
-                document.body.style.background = 'linear-gradient(135deg, #082f49 0%, #0369a1 50%, #164e63 100%)';
-                btnBg = 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)';
-            } else if (theme === 'pinkneon') {
-                document.body.style.background = 'linear-gradient(135deg, #4c0519 0%, #be185d 50%, #831843 100%)';
-                btnBg = 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)';
-            } else if (theme === 'fire') {
-                document.body.style.background = 'linear-gradient(135deg, #450a0a 0%, #c2410c 50%, #7c2d12 100%)';
-                btnBg = 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)';
-            } else if (theme === 'gold') {
-                document.body.style.background = 'linear-gradient(135deg, #18181b 0%, #713f12 50%, #27272a 100%)';
-                btnBg = 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)';
-            }
-            rollBtn.style.background = btnBg;
-        }
-
-        soundInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            stopAllSounds();
-            if (customAudioUrl) URL.revokeObjectURL(customAudioUrl);
-            customAudioUrl = URL.createObjectURL(file);
-            customAudio = new Audio(customAudioUrl);
-            customAudio.volume = parseFloat(volumeRange.value);
-
-            const group = document.getElementById('customSoundGroup');
-            let customOpt = document.getElementById('customSoundOption');
-            if (!customOpt) {
-                customOpt = document.createElement('option');
-                customOpt.id = 'customSoundOption';
-                customOpt.value = 'custom';
-                group.insertBefore(customOpt, group.firstChild);
-            }
-            const shortName = file.name.length > 18 ? file.name.slice(0, 15) + '...' : file.name;
-            customOpt.textContent = `🎵 ${shortName}`;
-            soundSelect.value = 'custom';
-            lastValidSound = 'custom';
-            playRollSound('normal');
-        });
-
-        bgImageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            bgVideo.style.display = 'none';
-            bgVideo.src = '';
-
-            const url = URL.createObjectURL(file);
-            const key = 'bg_' + Date.now();
-            savedBackgrounds[key] = { type: 'image', url: url };
-
-            document.body.style.background = `url('${url}') center / cover no-repeat fixed`;
-
-            const group = document.getElementById('customBgsGroup');
-            const newOpt = document.createElement('option');
-            newOpt.value = key;
-            newOpt.textContent = `🖼️ ${file.name.slice(0, 16)}`;
-            group.insertBefore(newOpt, group.firstChild);
-
-            themeSelect.value = key;
-            lastValidTheme = key;
-            bgImageInput.value = '';
-        });
-
-        bgVideoInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            document.body.style.background = '#090d16';
-
-            const url = URL.createObjectURL(file);
-            const key = 'bg_' + Date.now();
-            savedBackgrounds[key] = { type: 'video', url: url };
-
-            bgVideo.src = url;
-            bgVideo.style.display = 'block';
-
-            const group = document.getElementById('customBgsGroup');
-            const newOpt = document.createElement('option');
-            newOpt.value = key;
-            newOpt.textContent = `🎬 ${file.name.slice(0, 16)}`;
-            group.insertBefore(newOpt, group.firstChild);
-
-            themeSelect.value = key;
-            lastValidTheme = key;
-            bgVideoInput.value = '';
-        });
-
-        applyTheme('space');
-        rollDice(false, 'normal');
-    </script>
-</body>
-</html>
+        <div class="popup-title" style="margin-top: 4px;">🌌 Тема оформления</div>
+        <select id="themeSelect" class="styled-select">
+            <optgroup label="Космические темы">
+                <option value="space">🌌 [🟣 Космос] Звезды</option>
+                <option value="saturn">🪐 [🟠 Сатурн] Планета</option>
+                <option value="neptune">🌊 [🔵 Нептун] Океан</option>
+            </optgroup>
+            <optgroup label="Неоновые & Кибер">
+                <option value="cyber">⚡ [🟣 Киберпанк] Неон</option>
+                <option value="neon">🟢 [🟢
