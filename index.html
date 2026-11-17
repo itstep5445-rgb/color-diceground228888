@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -15,18 +14,19 @@
 
         body {
             min-height: 100vh;
+            width: 100vw;
             background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
             color: #ffffff;
-            transition: background 0.5s ease;
+            transition: background 0.4s ease;
             overflow: hidden;
+            position: relative;
         }
 
         #bgVideo {
@@ -39,22 +39,22 @@
             display: none;
         }
 
-        /* Верхняя панель управления */
+        /* Верхняя панель кнопок */
         .top-controls-bar {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 18px;
+            right: 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            z-index: 50;
+            gap: 10px;
+            z-index: 100;
         }
 
         .top-icon-btn {
             width: 46px;
             height: 46px;
             border-radius: 50%;
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.88);
             border: 2px solid rgba(255, 255, 255, 0.4);
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
@@ -68,9 +68,9 @@
         }
 
         .top-icon-btn:hover {
-            transform: scale(1.1);
-            background: rgba(30, 41, 59, 0.95);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+            transform: scale(1.08);
+            background: rgba(30, 41, 59, 0.98);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.25);
         }
 
         .palette-btn {
@@ -78,32 +78,27 @@
         }
 
         /* Перетаскиваемые всплывающие окна */
-        .popup-menu {
+        .popup-window {
             position: fixed;
-            top: 80px;
+            top: 76px;
             right: 20px;
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.24);
             border-radius: 18px;
             padding: 14px 16px 16px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(18px);
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 12px;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-            min-width: 270px;
+            width: 280px;
+            max-width: calc(100vw - 32px);
             text-align: left;
-            z-index: 40;
+            z-index: 60;
         }
 
-        .popup-menu.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
+        .popup-window.open {
+            display: flex;
         }
 
         .drag-header {
@@ -112,7 +107,7 @@
             justify-content: space-between;
             cursor: grab;
             padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             user-select: none;
             touch-action: none;
         }
@@ -134,14 +129,13 @@
 
         .drag-dots {
             color: #64748b;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
+            font-size: 0.95rem;
         }
 
         .close-popup-btn {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            color: #94a3b8;
+            color: #cbd5e1;
             width: 24px;
             height: 24px;
             border-radius: 50%;
@@ -150,24 +144,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
+            transition: background 0.15s, color 0.15s;
         }
 
         .close-popup-btn:hover {
-            background: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.45);
             color: #ffffff;
         }
 
-        /* Главная перетаскиваемая карточка */
+        /* Главная карточка (изначально по центру, при перетаскивании свободно двигается) */
         .main-card {
-            position: fixed;
-            z-index: 10;
-            width: calc(100% - 40px);
-            max-width: 580px;
-            background: rgba(15, 23, 42, 0.8);
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            max-width: 560px;
+            background: rgba(15, 23, 42, 0.82);
             border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 28px;
-            padding: 24px 30px 32px;
+            padding: 22px 28px 30px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
@@ -177,7 +171,7 @@
         .main-drag-handle {
             width: 100%;
             cursor: grab;
-            padding: 4px 0 10px;
+            padding: 2px 0 8px;
             user-select: none;
             touch-action: none;
         }
@@ -189,18 +183,13 @@
         .drag-pill {
             width: 44px;
             height: 5px;
-            background: rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.25);
             border-radius: 99px;
             margin: 0 auto 12px;
-            transition: background 0.2s;
-        }
-
-        .main-drag-handle:hover .drag-pill {
-            background: rgba(255, 255, 255, 0.45);
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.4rem;
             font-weight: 800;
             margin-bottom: 6px;
             letter-spacing: 0.5px;
@@ -213,8 +202,7 @@
         }
 
         .header-icon {
-            font-size: 2.1rem;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+            font-size: 2rem;
             -webkit-text-fill-color: initial;
         }
 
@@ -230,11 +218,9 @@
         .top-credit a {
             color: #38bdf8;
             text-decoration: none;
-            transition: color 0.2s;
         }
 
         .top-credit a:hover {
-            color: #7dd3fc;
             text-decoration: underline;
         }
 
@@ -270,17 +256,16 @@
         .styled-select {
             appearance: none;
             -webkit-appearance: none;
-            background-color: rgba(30, 41, 59, 0.85);
+            background-color: rgba(30, 41, 59, 0.9);
             color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 14px;
-            padding: 12px 32px 12px 12px;
+            padding: 11px 32px 11px 12px;
             font-size: 0.88rem;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
             outline: none;
-            transition: border-color 0.2s, background-color 0.2s;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 10px center;
@@ -288,38 +273,34 @@
         }
 
         .styled-select:hover, .styled-select:focus {
-            border-color: rgba(99, 102, 241, 0.7);
-            background-color: rgba(30, 41, 59, 1);
+            border-color: rgba(99, 102, 241, 0.8);
         }
 
         .styled-select optgroup {
             background-color: #0f172a;
             color: #94a3b8;
-            font-style: normal;
-            font-weight: 700;
         }
 
         .styled-select option {
             background-color: #1e293b;
             color: #ffffff;
-            padding: 8px;
         }
 
         /* Арена кубиков */
         .dice-arena {
-            min-height: 120px;
+            min-height: 116px;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
-            margin: 20px 0;
+            margin: 18px 0;
             padding: 10px;
         }
 
         .dice {
-            width: 82px;
-            height: 82px;
+            width: 80px;
+            height: 80px;
             border-radius: 20px;
             border: 3px solid rgba(255, 255, 255, 0.92);
             display: flex;
@@ -328,23 +309,23 @@
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.35);
             position: relative;
             user-select: none;
-            transition: background-color 0.08s linear, transform 0.15s ease, box-shadow 0.2s ease;
+            transition: background-color 0.07s linear, box-shadow 0.2s ease;
             animation-duration: var(--anim-dur, 0.45s);
             animation-fill-mode: both;
         }
 
         .dice.rolling {
-            animation: diceShake 0.14s infinite alternate ease-in-out;
-            box-shadow: 0 0 22px rgba(255, 255, 255, 0.45);
+            animation: diceShake 0.13s infinite alternate ease-in-out;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.45);
         }
 
         .dice.locked {
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 18px rgba(255, 255, 255, 0.35);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 16px rgba(255, 255, 255, 0.3);
         }
 
         @keyframes diceShake {
-            0% { transform: scale(0.95) rotate(-5deg); }
-            100% { transform: scale(1.04) rotate(5deg); }
+            0% { transform: scale(0.95) rotate(-6deg); }
+            100% { transform: scale(1.05) rotate(6deg); }
         }
 
         .dice-dot {
@@ -355,10 +336,10 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
         }
 
-        /* Анимации финиша кубиков */
+        /* Анимации финиша */
         .anim-bounce { animation-name: animBounce; animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes animBounce {
-            0% { transform: scale(0.6) rotate(-15deg); }
+            0% { transform: scale(0.55) rotate(-15deg); }
             65% { transform: scale(1.14) rotate(4deg); }
             100% { transform: scale(1) rotate(0deg); }
         }
@@ -390,8 +371,8 @@
         /* Кнопки броска */
         #rollBtn {
             width: 100%;
-            padding: 16px;
-            font-size: 1.25rem;
+            padding: 15px;
+            font-size: 1.22rem;
             font-weight: 800;
             letter-spacing: 0.06em;
             color: #ffffff;
@@ -399,9 +380,9 @@
             border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 16px;
             cursor: pointer;
-            box-shadow: 0 10px 28px rgba(99, 102, 241, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 28px rgba(99, 102, 241, 0.45);
             margin-bottom: 12px;
-            transition: transform 0.12s ease, filter 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+            transition: transform 0.12s ease, filter 0.2s ease;
         }
 
         #rollBtn:hover { filter: brightness(1.08); }
@@ -418,23 +399,22 @@
             font-size: 0.9rem;
             font-weight: 700;
             color: #ffffff;
-            background: rgba(30, 41, 59, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .speed-btn:hover {
-            background: rgba(51, 65, 85, 0.9);
+            background: rgba(51, 65, 85, 0.95);
             border-color: rgba(255, 255, 255, 0.4);
         }
         .speed-btn:active { transform: scale(0.97); }
 
         .btn-active-mode {
             border-color: #38bdf8 !important;
-            box-shadow: 0 0 16px rgba(56, 189, 248, 0.45) !important;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.5) !important;
         }
 
         /* История бросков */
@@ -448,8 +428,8 @@
         }
 
         .history-item {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 10px;
             padding: 8px 10px;
             font-size: 0.78rem;
@@ -463,34 +443,34 @@
             display: flex;
             gap: 5px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .history-dot {
             width: 13px;
             height: 13px;
             border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.75);
         }
 
         .history-badge {
-            font-size: 0.68rem;
+            font-size: 0.7rem;
             padding: 2px 6px;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
         }
 
         .clear-history-btn {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.22);
+            border: 1px solid rgba(239, 68, 68, 0.45);
             color: #fca5a5;
             border-radius: 8px;
             padding: 7px;
-            font-size: 0.75rem;
+            font-size: 0.76rem;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
         }
 
         .clear-history-btn:hover {
@@ -501,7 +481,7 @@
             -webkit-appearance: none;
             width: 100%;
             height: 6px;
-            background: rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
             outline: none;
             cursor: pointer;
@@ -514,11 +494,8 @@
             border-radius: 50%;
             background: #38bdf8;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
-            transition: transform 0.15s;
         }
 
-        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
         input[type="file"] { display: none; }
     </style>
 </head>
@@ -533,8 +510,8 @@
         <button type="button" class="top-icon-btn palette-btn" id="paletteToggleBtn" title="Палитра тем и фонов">🎨</button>
     </div>
 
-    <!-- Перетаскиваемое окно: История бросков -->
-    <div class="popup-menu" id="historyPopup" style="min-width: 290px; right: 136px;">
+    <!-- Окно 1: История бросков -->
+    <div class="popup-window" id="historyPopup" style="right: 130px;">
         <div class="drag-header" data-drag-target="historyPopup">
             <div class="popup-title"><span class="drag-dots">⋮⋮</span> 📜 История бросков</div>
             <button type="button" class="close-popup-btn" data-close="historyPopup">✕</button>
@@ -545,8 +522,8 @@
         <button type="button" class="clear-history-btn" id="clearHistoryBtn">Очистить историю</button>
     </div>
 
-    <!-- Перетаскиваемое окно: Звук и громкость -->
-    <div class="popup-menu" id="volumePopup" style="min-width: 265px; right: 78px;">
+    <!-- Окно 2: Звук и громкость -->
+    <div class="popup-window" id="volumePopup" style="right: 74px;">
         <div class="drag-header" data-drag-target="volumePopup">
             <div class="popup-title"><span class="drag-dots">⋮⋮</span> 🔊 Звук и микшер</div>
             <button type="button" class="close-popup-btn" data-close="volumePopup">✕</button>
@@ -571,13 +548,13 @@
         </select>
     </div>
 
-    <!-- Перетаскиваемое окно: Палитра и темы -->
-    <div class="popup-menu" id="palettePopup" style="min-width: 265px; right: 20px;">
+    <!-- Окно 3: Палитра и темы -->
+    <div class="popup-window" id="palettePopup" style="right: 18px;">
         <div class="drag-header" data-drag-target="palettePopup">
             <div class="popup-title"><span class="drag-dots">⋮⋮</span> 🎨 Темы и цвета</div>
             <button type="button" class="close-popup-btn" data-close="palettePopup">✕</button>
         </div>
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(30,41,59,0.7); padding: 8px 12px; border-radius: 12px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(30,41,59,0.75); padding: 8px 12px; border-radius: 12px;">
             <span style="font-size: 0.82rem; font-weight: 600;">RGB Цветовой тон</span>
             <input type="color" id="colorPickerInput" value="#6366f1" style="width: 32px; height: 32px; border: none; cursor: pointer; background: none;">
         </div>
@@ -650,10 +627,8 @@
 
         <div id="diceArena" class="dice-arena"></div>
 
-        <!-- Кнопка обычного броска -->
         <button type="button" id="rollBtn">БРОСИТЬ !</button>
 
-        <!-- Кнопки быстрого и медленного ролла -->
         <div class="speed-buttons-grid">
             <button type="button" id="fastRollBtn" class="speed-btn">⚡ Быстрый ролл</button>
             <button type="button" id="slowRollBtn" class="speed-btn">🐢 Медленный ролл</button>
@@ -708,16 +683,16 @@
         let lastValidTheme = 'space';
         let savedBackgrounds = {};
         let rollHistory = [];
-        let topZIndex = 45;
+        let topZIndex = 65;
 
-        // ================= ПЕРЕТАСКИВАНИЕ ОКОН (DRAG & DROP) =================
+        // ================= ПЕРЕТАСКИВАНИЕ ОКОН =================
         function bringToFront(el) {
-            if (el.id === 'mainCard') return;
+            if (!el || el.id === 'mainCard') return;
             topZIndex++;
             el.style.zIndex = topZIndex;
         }
 
-        document.querySelectorAll('.popup-menu').forEach(win => {
+        document.querySelectorAll('.popup-window').forEach(win => {
             win.addEventListener('mousedown', () => bringToFront(win));
             win.addEventListener('touchstart', () => bringToFront(win), { passive: true });
         });
@@ -735,11 +710,13 @@
                 isDragging = true;
                 bringToFront(targetEl);
                 const rect = targetEl.getBoundingClientRect();
+
+                targetEl.style.position = 'fixed';
+                targetEl.style.margin = '0';
                 targetEl.style.left = rect.left + 'px';
                 targetEl.style.top = rect.top + 'px';
                 targetEl.style.right = 'auto';
                 targetEl.style.bottom = 'auto';
-                targetEl.style.transform = 'none';
 
                 startX = clientX;
                 startY = clientY;
@@ -749,11 +726,8 @@
 
             function onMove(clientX, clientY) {
                 if (!isDragging) return;
-                const dx = clientX - startX;
-                const dy = clientY - startY;
-
-                let newLeft = origLeft + dx;
-                let newTop = origTop + dy;
+                let newLeft = origLeft + (clientX - startX);
+                let newTop = origTop + (clientY - startY);
 
                 const maxLeft = window.innerWidth - 60;
                 const maxTop = window.innerHeight - 50;
@@ -792,14 +766,13 @@
             window.addEventListener('touchend', onEnd);
         });
 
-        // Открытие и закрытие всплывающих окон
         function togglePopup(popup) {
-            const willOpen = !popup.classList.contains('active');
-            if (willOpen) {
-                popup.classList.add('active');
+            const isOpen = popup.classList.contains('open');
+            if (!isOpen) {
+                popup.classList.add('open');
                 bringToFront(popup);
             } else {
-                popup.classList.remove('active');
+                popup.classList.remove('open');
             }
         }
 
@@ -810,7 +783,8 @@
         document.querySelectorAll('[data-close]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-close');
-                document.getElementById(id)?.classList.remove('active');
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('open');
             });
         });
 
@@ -894,7 +868,7 @@
             const soundType = soundSelect.value;
             if (soundType === 'mute' || soundType === 'upload_sound') return;
 
-            const vol = parseFloat(volumeRange.value) * 0.45;
+            const vol = parseFloat(volumeRange.value) * 0.4;
             if (vol <= 0) return;
 
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1032,7 +1006,7 @@
             }
         }
 
-        // ================= ПЕРЕРАБОТАННАЯ ЛОГИКА РОЛЛОВ =================
+        // ================= ЛОГИКА РОЛЛОВ =================
         function clearActiveRollProcesses() {
             activeTimers.forEach(id => clearTimeout(id));
             activeTimers = [];
@@ -1065,7 +1039,7 @@
             diceEl.classList.remove('rolling');
             diceEl.style.backgroundColor = colorObj.hex;
             diceEl.style.setProperty('--anim-dur', `${animDuration}s`);
-            void diceEl.offsetWidth; // перезапуск CSS-анимации
+            void diceEl.offsetWidth;
             diceEl.classList.add(`anim-${animType}`, 'locked');
         }
 
@@ -1077,7 +1051,6 @@
             const count = parseInt(diceCountSelect.value, 10);
             diceArena.innerHTML = '';
 
-            // Заранее генерируем финальные цвета
             const finalColors = Array.from({ length: count }, () => getRandomColor());
             const diceElements = [];
 
@@ -1088,7 +1061,6 @@
                 diceElements.push(el);
             }
 
-            // 1. БЫСТРЫЙ РОЛЛ (мгновенный выброс)
             if (mode === 'fast') {
                 fastRollBtn.classList.add('btn-active-mode');
                 if (withSound) playRollSound('fast');
@@ -1106,7 +1078,6 @@
                 return;
             }
 
-            // 2. ОБЫЧНЫЙ РОЛЛ (интенсивное перемешивание 0.45 сек, затем каскадная остановка)
             if (mode === 'normal') {
                 rollBtn.classList.add('btn-active-mode');
                 diceElements.forEach(el => el.classList.add('rolling'));
@@ -1126,7 +1097,7 @@
                 activeIntervals.push(shuffleInt);
 
                 diceElements.forEach((el, idx) => {
-                    const stopDelay = 320 + idx * 75;
+                    const stopDelay = 300 + idx * 75;
                     const t = setTimeout(() => {
                         if (rollId !== currentRollId) return;
                         if (idx === 0 && withSound) playRollSound('normal');
@@ -1143,12 +1114,10 @@
                 return;
             }
 
-            // 3. МЕДЛЕННЫЙ РОЛЛ (режим рулетки с замедлением по каждому кубику)
             if (mode === 'slow') {
                 slowRollBtn.classList.add('btn-active-mode');
                 diceElements.forEach(el => el.classList.add('rolling'));
 
-                // Фоновая прокрутка для еще не остановившихся кубиков
                 const bgShuffle = setInterval(() => {
                     if (rollId !== currentRollId) return;
                     diceElements.forEach(el => {
@@ -1159,12 +1128,10 @@
                 }, 90);
                 activeIntervals.push(bgShuffle);
 
-                // Поочередная интригующая остановка каждого кубика
                 diceElements.forEach((el, idx) => {
-                    const baseDelay = 550 + idx * 650;
+                    const baseDelay = 520 + idx * 620;
 
-                    // Несколько замедляющихся тиков перед остановкой конкретного кубика
-                    [baseDelay - 260, baseDelay - 130].forEach((tickTime, stepIdx) => {
+                    [baseDelay - 240, baseDelay - 120].forEach((tickTime, stepIdx) => {
                         const tickTimer = setTimeout(() => {
                             if (rollId !== currentRollId) return;
                             el.style.backgroundColor = getRandomColor().hex;
